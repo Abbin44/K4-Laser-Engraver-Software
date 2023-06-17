@@ -2958,18 +2958,18 @@ namespace diao
             }
         }
 
-        private double qu_cha(Form1.Dian dd1, Form1.Dian dd2)
+        private double qu_cha(Form1.Dian dd1, Form1.Dian dd2)//translated to - go to check??
         {
             int num1 = Math.Abs(dd1.y - dd2.y);
             int num2 = Math.Abs(dd1.x - dd2.x);
-            return Math.Sqrt((double)(num1 * num1 + num2 * num2));
+            return Math.Sqrt((num1 * num1 + num2 * num2));
         }
 
-        private List<Form1.Dian> qu_dian1111()
+        private List<Form1.Dian> qu_dian1111() //translated to - outgoing call??
         {
             int index1 = 0;
             List<Form1.Dian> dianList1 = new List<Form1.Dian>();
-            List<Form1.Dian> dianList2 = new List<Form1.Dian>((IEnumerable<Form1.Dian>)this.dian);
+            List<Form1.Dian> dianList2 = new List<Form1.Dian>(dian);
             this.shu_ = this.dian.Count;
             this.jin_du = 0;
             for (int index2 = 0; index2 < this.shu_; ++index2)
@@ -2987,7 +2987,7 @@ namespace diao
                     int count = dianList2.Count;
                     for (int index3 = 0; index3 < count; ++index3)
                     {
-                        double num = this.qu_cha(dianList1[dianList1.Count - 1], dianList2[index3]);
+                        double num = qu_cha(dianList1[dianList1.Count - 1], dianList2[index3]);
                         if (num == 1.0)
                         {
                             dianList1.Add(dianList2[index3]);
@@ -3000,7 +3000,7 @@ namespace diao
                             index1 = index3;
                             flag1 = true;
                         }
-                        if (this.qu_cha(dianList1[dianList1.Count - 1], dianList2[index1]) > num)
+                        if (qu_cha(dianList1[dianList1.Count - 1], dianList2[index1]) > num)
                             index1 = index3;
                     }
                     if (!flag2)
@@ -3134,7 +3134,7 @@ namespace diao
             ting_zhi();
         }
 
-        private void but_tingzhi_Click(object sender, EventArgs e)
+        private void btnStop_Click(object sender, EventArgs e)
         {
             if (!this.isRunning)
                 return;
@@ -3211,11 +3211,11 @@ namespace diao
         {
             if (!this.engraverConnected)
             {
-                int num = (int)MessageBox.Show(this.str22);
+                int num = (int)MessageBox.Show(str22);
             }
             else
             {
-                if (this.isRunning || !this.engraverConnected || this.tj_zt)
+                if (this.isRunning || !this.engraverConnected || tj_zt)
                     return;
                 this.hua_ban.Location = new System.Drawing.Point();
                 this.dao_yuandian();
@@ -3224,32 +3224,32 @@ namespace diao
 
         private void xuan_ze_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.fang_shi = this.pictureProcessingDropDownMenu.SelectedIndex + 1;
-            this.chu_li();
-            if (this.pictureProcessingDropDownMenu.SelectedIndex == 3)
+            fang_shi = pictureProcessingDropDownMenu.SelectedIndex + 1;
+            chu_li();
+            if (pictureProcessingDropDownMenu.SelectedIndex == 3)
             {
-                this.tiao_shendu.Value = 20;
-                this.skinLabel3.Text = "20%";
-                this.text_kuan.Enabled = true;
-                this.text_gao.Enabled = true;
+                tiao_shendu.Value = 20;
+                skinLabel3.Text = "20%";
+                text_kuan.Enabled = true;
+                text_gao.Enabled = true;
             }
-            else if (this.pictureProcessingDropDownMenu.SelectedIndex == 0 || this.pictureProcessingDropDownMenu.SelectedIndex == 1)
+            else if (this.pictureProcessingDropDownMenu.SelectedIndex == 0 || pictureProcessingDropDownMenu.SelectedIndex == 1)
             {
-                this.tiao_shendu.Value = 10;
-                this.skinLabel3.Text = "10%";
-                this.text_kuan.Enabled = true;
-                this.text_gao.Enabled = true;
+                tiao_shendu.Value = 10;
+                skinLabel3.Text = "10%";
+                text_kuan.Enabled = true;
+                text_gao.Enabled = true;
             }
             else
             {
-                this.tiao_shendu.Value = 10;
-                this.skinLabel3.Text = "10%";
-                this.text_kuan.Enabled = false;
-                this.text_gao.Enabled = false;
+                tiao_shendu.Value = 10;
+                skinLabel3.Text = "10%";
+                text_kuan.Enabled = false;
+                text_gao.Enabled = false;
             }
         }
 
-        private void yi_dong(int k)
+        private void move(int k)
         {
             switch (k)
             {
@@ -3297,14 +3297,14 @@ namespace diao
                 Thread.Sleep(2);
                 this.change_half.Refresh();
             }
-            this.yi_dong(e.KeyValue);
+            this.move(e.KeyValue);
         }
 
         private void huan_ban_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             if (this.isRunning || !this.engraverConnected)
                 return;
-            this.yi_dong(e.KeyValue);
+            this.move(e.KeyValue);
         }
 
         private void skinButton1_Click(object sender, EventArgs e) => this.menu.Show((Control)(sender as Button), (sender as Button).PointToClient(Cursor.Position), ToolStripDropDownDirection.BelowRight);
@@ -3330,7 +3330,7 @@ namespace diao
             this.UpdateNewLanguage();
         }
 
-        private void 设置ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SetUpToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new set().Show();
             set.m_formA.zhi(this.ruo, this.hang_yan_shi, this.TIM_chong_zhuang_zhi, this.BU, this.x_buchang, this.y_buchang, this.SS, this.MM1, this.KUAI, this.kuang_sd, this.xing_hao);
@@ -3339,7 +3339,8 @@ namespace diao
         private void pifu()
         {
             if (!this.ini.ExistINIFile())
-                return;
+                return; //If .ini file does not exist
+
             string str = this.ini.IniReadValue("pi_fu", "pi_fu");
             if (!File.Exists(str))
                 return;
@@ -3348,10 +3349,10 @@ namespace diao
             Graphics graphics = Graphics.FromImage((System.Drawing.Image)bitmap1);
             graphics.DrawImage((System.Drawing.Image)bitmap2, 0, 0, this.Width, this.Height);
             graphics.Dispose();
-            this.BackgroundImage = (System.Drawing.Image)bitmap1;
+            BackgroundImage = bitmap1;
         }
 
-        private void 皮肤ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SkinToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (this.pi_fu.ShowDialog() != DialogResult.OK)
                 return;
@@ -3471,7 +3472,7 @@ namespace diao
 
         private void ji_shi_Tick(object sender, EventArgs e)
         {
-            ++this.shi_jian_;
+            ++shi_jian_;
             int num1 = this.shi_jian_ / 3600;
             int num2 = this.shi_jian_ % 3600 / 60;
             int num3 = this.shi_jian_ % 3600 % 60;
@@ -4032,7 +4033,7 @@ namespace diao
             this.btnStop.TabIndex = 12;
             this.btnStop.Text = "停止";
             this.btnStop.UseVisualStyleBackColor = false;
-            this.btnStop.Click += new System.EventHandler(this.but_tingzhi_Click);
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
             // pictureProcessingDropDownMenu
             // 
@@ -4386,14 +4387,14 @@ namespace diao
             this.setUpToolStripMenuItem.Name = "setUpToolStripMenuItem";
             this.setUpToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.setUpToolStripMenuItem.Text = "设置";
-            this.setUpToolStripMenuItem.Click += new System.EventHandler(this.设置ToolStripMenuItem_Click);
+            this.setUpToolStripMenuItem.Click += new System.EventHandler(this.SetUpToolStripMenuItem_Click);
             // 
             // skinToolStripMenuItem
             // 
             this.skinToolStripMenuItem.Name = "skinToolStripMenuItem";
             this.skinToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.skinToolStripMenuItem.Text = "皮肤";
-            this.skinToolStripMenuItem.Click += new System.EventHandler(this.皮肤ToolStripMenuItem_Click);
+            this.skinToolStripMenuItem.Click += new System.EventHandler(this.SkinToolStripMenuItem_Click);
             // 
             // BMPToolStripMenuItem
             // 
@@ -4711,15 +4712,15 @@ namespace diao
 
             public Dian(int xx, int yy)
             {
-                this.x = xx;
-                this.y = yy;
+                x = xx;
+                y = yy;
             }
         }
 
         private struct Xian
         {
-            public Form1.Dian q;
-            public Form1.Dian zh;
+            public Dian q;
+            public Dian zh;
         }
 
         public enum HardwareEnum
