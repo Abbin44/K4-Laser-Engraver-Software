@@ -8,7 +8,7 @@ using AForge.Imaging.Filters;
 using CCWin;
 using CCWin.SkinClass;
 using CCWin.SkinControl;
-using netDxf;
+using netDxf; //Read/Write AutoCad Files??
 using netDxf.Entities;
 using System;
 using System.Collections.Generic;
@@ -59,8 +59,8 @@ namespace diao
         private bool kuang;
         private bool mm_in = true;
         private bool fan_se;
-        private bool fan_hui_ma;
-        private int fan_hui_shu;
+        private bool returnCode;
+        private int returnValue;
         private bool fs_wc;
         private int m_jd;
         private bool tingzhi;
@@ -89,26 +89,26 @@ namespace diao
         private int k_gao;
         private bool shi_liang;
         private List<PointF[]> dian_shu_zu = new List<PointF[]>();
-        private int jin_du;
-        private int shu_;
+        private int progress;//Percentage?
+        private int shu_; //Number, count, quantity or volume?
         private Form1.Xian xian_linshi = new Form1.Xian();
-        private int shi_jian_;
-        private bool qu_xinghao;
+        private int shi_jian_;// Time - Moments - Events?
+        private bool qu_xinghao;//To get/Retrieve?
         public static object locker = new object();
-        private string xing_hao = "1 6 04";
+        private string modelNumber = "1 6 04";
         private string selectedLanguge = "ch";
         private string modelVersion = "K4 V2.5";
-        private string str1 = "Connect Device";
-        private string str2 = "Disconnect Device";
-        private string str3 = "Ok";
+        private string connectDeviceString = "Connect Device";
+        private string disconnectDeviceString = "Disconnect Device";
+        private string okString = "Ok";
         private string str4 = "Enter Text";
         private string str5 = "Saved Successfully:";
-        private string str6 = "Pause";
-        private string str7 = "Continue";
-        private string str8 = "Start";
+        private string pauseString = "Pause";
+        private string continueString = "Continue";
+        private string startString = "Start";
         private string str9 = "Failed to connect to device! Please check whether the data cable is plugged in. Is the driver installed?";
-        private string str10 = "Please stop previewing location first!";
-        private string str11 = "Picture";
+        private string stopPreviewString = "Please stop previewing location first!";
+        private string pictureString = "Picture";
         private string str12 = "Set Up";
         private string str13 = "Skin";
         private string str14 = "Image processing method";
@@ -116,13 +116,13 @@ namespace diao
         private string str16 = "Engraving Depth";
         private string str17 = "Preview Location";
         private string str18 = "Reset Coordinates";
-        private string str19 = "Width";
-        private string str20 = "Height";
-        private string str21 = "Open the Picture";
+        private string widthString = "Width";
+        private string heightString = "Height";
+        private string openPictureString = "Open the Picture";
         private string str22 = "Please connect the device first!";
         private string str23 = "Batch convert pictures to BMP";
-        private string str24 = "Lock aspect ratio\r\n";
-        private string str25 = "Stop";
+        private string lockAspectString = "Lock aspect ratio\r\n";
+        private string stopString = "Stop";
         private Bitmap image;
         private IContainer components;
         private SkinPanel change_half;
@@ -800,13 +800,13 @@ namespace diao
 
         private void chu_li()
         {
-            switch (this.fang_shi)
+            switch (fang_shi)
             {
                 case 1:
-                    this.tu_diaoke = this.hei_bai(128);
+                    tu_diaoke = hei_bai(128);
                     break;
                 case 2:
-                    this.tu_diaoke = this.dou_dong(this.tu_suofang, 30);
+                    tu_diaoke = dou_dong(tu_suofang, 30);
                     break;
                 case 3:
                     this.tu_diaoke = this.hei_bai(128);
@@ -874,7 +874,7 @@ namespace diao
 
         private bool lianjie()
         {
-            this.fan_hui_ma = false;
+            this.returnCode = false;
             bool flag = false;
             foreach (string portName in SerialPort.GetPortNames())
             {
@@ -895,7 +895,7 @@ namespace diao
                     {
                         Application.DoEvents();
                         Thread.Sleep(10);
-                        if (this.fan_hui_ma)
+                        if (this.returnCode)
                             return true;
                     }
                 }
@@ -949,12 +949,12 @@ namespace diao
                 return false;
             }
             int num1 = 10;
-            this.fan_hui_ma = false;
+            this.returnCode = false;
             while (0 < num1--)
             {
                 Thread.Sleep(10);
                 this.chuli_shijian();
-                if (this.fan_hui_ma)
+                if (this.returnCode)
                     return true;
             }
             return false;
@@ -983,7 +983,7 @@ namespace diao
             this.MM1 = MM1_;
             this.KUAI = KUAI_;
             this.kuang_sd = kuang_sd_;
-            this.xing_hao = xh;
+            this.modelNumber = xh;
             this.she_zhi();
             this.xinghao();
             this.pifu();
@@ -998,13 +998,13 @@ namespace diao
             this.ini.IniWriteValue("set", "KUAI", this.KUAI.ToString());
             this.ini.IniWriteValue("set", "kuang_sd", this.kuang_sd.ToString());
             this.ini.IniWriteValue("selectedLanguge", "selectedLanguge", this.selectedLanguge);
-            this.ini.IniWriteValue("xing_hao", "xing_hao", this.xing_hao);
+            this.ini.IniWriteValue("modelNumber", "modelNumber", this.modelNumber);
         }
 
         private void xinghao()
         {
-            int num = this.xing_hao.LastIndexOf(",");
-            switch (this.xing_hao.Substring(num + 1, this.xing_hao.Length - num - 1))
+            int num = this.modelNumber.LastIndexOf(",");
+            switch (this.modelNumber.Substring(num + 1, this.modelNumber.Length - num - 1))
             {
                 case "22":
                     this.xian_k = 3100;
@@ -1043,7 +1043,7 @@ namespace diao
                     this.but_tuoji.Visible = true;
                     break;
             }
-            this.ini.IniWriteValue("xing_hao", "xing_hao", this.xing_hao);
+            this.ini.IniWriteValue("modelNumber", "modelNumber", this.modelNumber);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -1069,7 +1069,7 @@ namespace diao
                 this.KUAI = Convert.ToInt32(this.ini.IniReadValue("set", "KUAI"));
                 this.kuang_sd = Convert.ToInt32(this.ini.IniReadValue("set", "kuang_sd"));
                 this.selectedLanguge = this.ini.IniReadValue("selectedLanguge", "selectedLanguge");
-                this.xing_hao = this.ini.IniReadValue("xing_hao", "xing_hao");
+                this.modelNumber = this.ini.IniReadValue("modelNumber", "modelNumber");
                 this.UpdateNewLanguage();
                 this.xinghao();
                 this.pifu();
@@ -1087,7 +1087,7 @@ namespace diao
                 this.ini.IniWriteValue("set", "KUAI", this.KUAI.ToString());
                 this.ini.IniWriteValue("set", "kuang_sd", this.kuang_sd.ToString());
                 this.ini.IniWriteValue("selectedLanguge", "selectedLanguge", this.selectedLanguge);
-                this.ini.IniWriteValue("xing_hao", "xing_hao", this.xing_hao);
+                this.ini.IniWriteValue("modelNumber", "modelNumber", this.modelNumber);
             }
         }
 
@@ -1095,17 +1095,17 @@ namespace diao
         {
             if (selectedLanguge == "ch")
             {
-                this.str1 = "连接设备";
-                this.str2 = "断开设备";
-                this.str3 = "确定";
+                this.connectDeviceString = "连接设备";
+                this.disconnectDeviceString = "断开设备";
+                this.okString = "确定";
                 this.str4 = "输入文字";
                 this.str5 = "保存成功：";
-                this.str6 = "暂停";
-                this.str7 = "继续";
-                this.str8 = "开始";
+                this.pauseString = "暂停";
+                this.continueString = "继续";
+                this.startString = "开始";
                 this.str9 = "连接设备失败！请检查数据线是否插好？驱动是否安装好？";
-                this.str10 = "请先停止预览位置！";
-                this.str11 = "图片";
+                this.stopPreviewString = "请先停止预览位置！";
+                this.pictureString = "图片";
                 this.str12 = "设置";
                 this.str13 = "皮肤";
                 this.str14 = "图片处理方式";
@@ -1113,13 +1113,13 @@ namespace diao
                 this.str16 = "雕刻深度";
                 this.str17 = "预览位置";
                 this.str18 = "重置坐标";
-                this.str19 = "宽度";
-                this.str20 = "高度";
-                this.str21 = "打开图片";
+                this.widthString = "宽度";
+                this.heightString = "高度";
+                this.openPictureString = "打开图片";
                 this.str22 = "请先连接设备";
                 this.str23 = "批量转换到BMP";
-                this.str24 = "锁定宽高比例";
-                this.str25 = "停止";
+                this.lockAspectString = "锁定宽高比例";
+                this.stopString = "停止";
                 if (this.engraverConnected)
                     this.btn_disconnectConnectDevice.Text = "断开设备";
                 else
@@ -1132,7 +1132,7 @@ namespace diao
                 else if (!this.isRunning)
                     this.btn_start.Text = "开始";
                 this.str9 = "连接设备失败！请检查数据线是否插好？驱动是否安装好？";
-                this.str10 = "请先停止预览位置！";
+                this.stopPreviewString = "请先停止预览位置！";
                 this.bmpFileDialog.Filter = "图片|*.BMP;*.jpg;*.png|矢量图|*.nc;*.DXF";
                 this.menu.Items[3].Text = "设置";
                 this.menu.Items[4].Text = "皮肤";
@@ -1142,7 +1142,7 @@ namespace diao
                 this.skinLabel5.Text = "雕刻深度:";
                 this.btnPreview.Text = "预览位置";
                 this.btnResetCoordinates.Text = "重置坐标";
-                this.btnStop.Text = str25;
+                this.btnStop.Text = stopString;
                 this.skinLabel8.Text = "宽度";
                 this.skinLabel9.Text = "高度";
                 this.btnOpenPicture.Text = "打开图片";
@@ -1159,21 +1159,21 @@ namespace diao
                 this.radioButton3.Text = "斜体";
                 this.radioButton4.Text = "粗体/斜体";
                 this.Text = "激光雕刻机 " + modelVersion;
-                this.lockAspectRatioChkBox.Text = str24;
+                this.lockAspectRatioChkBox.Text = lockAspectString;
             }
             else if (selectedLanguge == "en")
             {
-                str1 = "Attach device";
-                str2 = "Disconnect device";
-                str3 = "Enter key";
+                connectDeviceString = "Attach device";
+                disconnectDeviceString = "Disconnect device";
+                okString = "Enter key";
                 str4 = "Input text";
                 str5 = "Save successfully：";
-                str6 = "Pause";
-                str7 = "Continue";
-                str8 = "Start";
+                pauseString = "Pause";
+                continueString = "Continue";
+                startString = "Start";
                 str9 = "Failed to connect device,please check if USB is attatched and driver is properly installed？";
-                str10 = "Please preview the location first！";
-                str11 = "pictures";
+                stopPreviewString = "Please preview the location first！";
+                pictureString = "pictures";
                 str12 = "Set";
                 str13 = "Skin";
                 str14 = "Picture Processing:";
@@ -1181,9 +1181,9 @@ namespace diao
                 str16 = "Carving depth:";
                 str17 = "Preview Position:";
                 str18 = "Reset coordinates:";
-                str19 = "Width:";
-                str20 = "Height:";
-                str21 = "Open the picture";
+                widthString = "Width:";
+                heightString = "Height:";
+                openPictureString = "Open the picture";
                 str22 = "Please connect device first!";
                 skinLabel1.Text = "Picture Processing:";
                 skinLabel4.Text = "Laser power:";
@@ -1193,8 +1193,8 @@ namespace diao
                 skinLabel8.Text = "Width";
                 skinLabel9.Text = "Height";
                 str23 = "Batch conversion to BMP";
-                str24 = "Lock the aspect ratio";
-                str25 = "Stop";
+                lockAspectString = "Lock the aspect ratio";
+                stopString = "Stop";
 
 
                 if (engraverConnected)
@@ -1212,13 +1212,13 @@ namespace diao
                     btn_start.Text = "Start";
 
                 str9 = "Failed to connect device,please check if USB is attatched and driver is properly installed？";
-                str10 = "Please preview the location first！";
+                stopPreviewString = "Please preview the location first！";
                 bmpFileDialog.Filter = "Pictures|*.BMP;*.jpg;*.png|Vector Graph|*.nc;*.DXF";
                 menu.Items[3].Text = "Set";
                 menu.Items[4].Text = "Skin";
                 menu.Items[5].Text = str23;
                 btnOpenPicture.Text = "Open the picture";
-                btnStop.Text = str25;
+                btnStop.Text = stopString;
                 int selectedIndex = pictureProcessingDropDownMenu.SelectedIndex;
                 pictureProcessingDropDownMenu.Items.Clear();
                 pictureProcessingDropDownMenu.Items.Add("Black and white");
@@ -1232,23 +1232,23 @@ namespace diao
                 radioButton3.Text = "Italics";
                 radioButton4.Text = "Bold/italic";
                 Text = "Laser engraving machine " + modelVersion;
-                lockAspectRatioChkBox.Text = str24;
+                lockAspectRatioChkBox.Text = lockAspectString;
             }
             else
             {
                 if (!(this.selectedLanguge == "jp"))
                     return;
-                this.str1 = "設備と接続";
-                this.str2 = "設備と切断";
-                this.str3 = "確認";
+                this.connectDeviceString = "設備と接続";
+                this.disconnectDeviceString = "設備と切断";
+                this.okString = "確認";
                 this.str4 = "テキスト挿入";
                 this.str5 = "保存に成功する：";
-                this.str6 = "一時停止";
-                this.str7 = "再開";
-                this.str8 = "スタート";
+                this.pauseString = "一時停止";
+                this.continueString = "再開";
+                this.startString = "スタート";
                 this.str9 = "彫刻機と接続できません。彫刻機がUSBケーブルで接続されているか確認してください。彫刻機が接続されている場合は、接続ボタンを押してください。";
-                this.str10 = "先にプレビューをやめてください！";
-                this.str11 = "画像";
+                this.stopPreviewString = "先にプレビューをやめてください！";
+                this.pictureString = "画像";
                 this.str12 = "設定";
                 this.str13 = "皮膚";
                 this.str14 = "画像処理方法:";
@@ -1256,9 +1256,9 @@ namespace diao
                 this.str16 = "彫刻の深さ";
                 this.str17 = "プレビューの位置:";
                 this.str18 = "座標をリセットする:";
-                this.str19 = "幅:";
-                this.str20 = "高さ:";
-                this.str21 = "画像を開く";
+                this.widthString = "幅:";
+                this.heightString = "高さ:";
+                this.openPictureString = "画像を開く";
                 this.str22 = "彫刻機が接続されている場合は、接続ボタンを押してください。";
                 this.skinLabel1.Text = "画像処理方法:";
                 this.skinLabel4.Text = "レーザーパワー:";
@@ -1268,8 +1268,8 @@ namespace diao
                 this.skinLabel8.Text = "幅:";
                 this.skinLabel9.Text = "高さ:";
                 this.str23 = "BMPにロット変換する";
-                this.str24 = "高さを測る";
-                this.str25 = "停止";
+                this.lockAspectString = "高さを測る";
+                this.stopString = "停止";
                 if (this.engraverConnected)
                     this.btn_disconnectConnectDevice.Text = "設備と切断";
                 else
@@ -1282,13 +1282,13 @@ namespace diao
                 else if (!this.isRunning)
                     this.btn_start.Text = "スタート";
                 this.str9 = "彫刻機と接続できません。彫刻機がUSBケーブルで接続されているか確認してください。彫刻機が接続されている場合は、接続ボタンを押してください。";
-                this.str10 = "先にプレビューをやめてください！";
+                this.stopPreviewString = "先にプレビューをやめてください！";
                 this.bmpFileDialog.Filter = "画像|*.BMP;*.jpg;*.png|ベクトル図|*.nc;*.DXF";
                 this.menu.Items[3].Text = "設定";
                 this.menu.Items[4].Text = "皮膚";
                 this.menu.Items[5].Text = this.str23;
                 this.btnOpenPicture.Text = "画像を開く";
-                this.btnStop.Text = this.str25;
+                this.btnStop.Text = this.stopString;
                 int selectedIndex = this.pictureProcessingDropDownMenu.SelectedIndex;
                 this.pictureProcessingDropDownMenu.Items.Clear();
                 this.pictureProcessingDropDownMenu.Items.Add((object)"モノクロ");
@@ -1302,7 +1302,7 @@ namespace diao
                 this.radioButton3.Text = "斜体";
                 this.radioButton4.Text = "粗体/斜体";
                 this.Text = "レーザー彫刻機 " + this.modelVersion;
-                this.lockAspectRatioChkBox.Text = this.str24;
+                this.lockAspectRatioChkBox.Text = this.lockAspectString;
             }
         }
 
@@ -1698,14 +1698,14 @@ namespace diao
                 if (this.isRunning)
                     this.ting_zhi();
                 this.engraverConnected = false;
-                this.btn_disconnectConnectDevice.Text = this.str1;
+                this.btn_disconnectConnectDevice.Text = this.connectDeviceString;
                 this.com.Close();
                 this.LED.Visible = false;
             }
             else if (this.lianjie())
             {
                 this.engraverConnected = true;
-                this.btn_disconnectConnectDevice.Text = this.str2;
+                this.btn_disconnectConnectDevice.Text = this.disconnectDeviceString;
                 this.LED.Visible = true;
                 this.she_zhi();
                 this.qu_xinghao = true;
@@ -1834,12 +1834,12 @@ namespace diao
                 return false;
             }
             int num1 = 10;
-            this.fan_hui_ma = false;
+            this.returnCode = false;
             while (0 < num1--)
             {
                 Thread.Sleep(10);
                 this.chuli_shijian();
-                if (this.fan_hui_ma)
+                if (this.returnCode)
                     return true;
             }
             return false;
@@ -1910,12 +1910,12 @@ namespace diao
                 return false;
             }
             int num1 = 300;
-            this.fan_hui_ma = false;
+            this.returnCode = false;
             while (0 < num1--)
             {
                 Thread.Sleep(10);
                 this.chuli_shijian();
-                if (this.fan_hui_ma)
+                if (this.returnCode)
                     return true;
             }
             return false;
@@ -1941,12 +1941,12 @@ namespace diao
                 return false;
             }
             int num1 = 300;
-            this.fan_hui_ma = false;
+            this.returnCode = false;
             while (0 < num1--)
             {
                 Thread.Sleep(10);
                 this.chuli_shijian();
-                if (this.fan_hui_ma)
+                if (this.returnCode)
                     return true;
             }
             return false;
@@ -2302,7 +2302,7 @@ namespace diao
                 {
                     try
                     {
-                        this.fan_hui_ma = false;
+                        this.returnCode = false;
                         this.com.Write(numArray1, 0, numArray1.Length);
                     }
                     catch (Exception ex)
@@ -2328,7 +2328,7 @@ namespace diao
                         this.com.Open();
                         continue;
                     }
-                    while (!this.fan_hui_ma)
+                    while (!this.returnCode)
                     {
                         if (this.com.IsOpen)
                         {
@@ -2339,7 +2339,7 @@ namespace diao
                             goto label_18;
                     }
                 }
-                while (this.fan_hui_shu == 8);
+                while (this.returnValue == 8);
                 Application.DoEvents();
                 lock (Form1.locker)
                     this.m_jd = (int)((double)y / (double)height * 100.0);
@@ -2357,7 +2357,7 @@ namespace diao
             int num1 = 2;
             do
             {
-                this.fan_hui_ma = false;
+                this.returnCode = false;
                 try
                 {
                     this.com.Write(new byte[4]
@@ -2378,7 +2378,7 @@ namespace diao
                 {
                     Thread.Sleep(10);
                     this.chuli_shijian();
-                    if (this.fan_hui_ma)
+                    if (this.returnCode)
                         return true;
                 }
             }
@@ -2422,12 +2422,12 @@ namespace diao
                 return false;
             }
             int num1 = 10;
-            this.fan_hui_ma = false;
+            this.returnCode = false;
             while (0 < num1--)
             {
                 Thread.Sleep(10);
                 this.chuli_shijian();
-                if (this.fan_hui_ma)
+                if (this.returnCode)
                     return true;
             }
             return false;
@@ -2478,12 +2478,12 @@ namespace diao
                 return false;
             }
             int num1 = 10;
-            this.fan_hui_ma = false;
+            this.returnCode = false;
             while (0 < num1--)
             {
                 Thread.Sleep(10);
                 this.chuli_shijian();
-                if (this.fan_hui_ma)
+                if (this.returnCode)
                     return true;
             }
             return false;
@@ -2509,12 +2509,12 @@ namespace diao
                 return false;
             }
             int num1 = 10;
-            this.fan_hui_ma = false;
+            this.returnCode = false;
             while (0 < num1--)
             {
                 Thread.Sleep(10);
                 this.chuli_shijian();
-                if (this.fan_hui_ma)
+                if (this.returnCode)
                     return true;
             }
             return false;
@@ -2540,12 +2540,12 @@ namespace diao
                 return false;
             }
             int num1 = 10;
-            this.fan_hui_ma = false;
+            this.returnCode = false;
             while (0 < num1--)
             {
                 Thread.Sleep(10);
                 this.chuli_shijian();
-                if (this.fan_hui_ma)
+                if (this.returnCode)
                     return true;
             }
             return false;
@@ -2650,7 +2650,7 @@ namespace diao
                         try
                         {
                             this.com.DiscardInBuffer();
-                            this.fan_hui_ma = false;
+                            this.returnCode = false;
                             this.com.Write(buffer, 0, buffer.Length);
                         }
                         catch (Exception ex)
@@ -2679,7 +2679,7 @@ namespace diao
                             continue;
                         }
                         int num3 = 0;
-                        while (!this.fan_hui_ma)
+                        while (!this.returnCode)
                         {
                             if (this.com.IsOpen)
                             {
@@ -2706,7 +2706,7 @@ namespace diao
                         this.chuli_shijian();
                         Thread.Sleep(10);
                     }
-                    while (this.fan_hui_shu == 8);
+                    while (this.returnValue == 8);
                 }
                 lock (Form1.locker)
                     this.m_jd = (int)((double)y / (double)bitmap.Height * 100.0);
@@ -2755,7 +2755,7 @@ namespace diao
                     {
                         try
                         {
-                            this.fan_hui_ma = false;
+                            this.returnCode = false;
                             this.com.Write(byteList.ToArray(), 0, byteList.ToArray().Length);
                             byteList.Clear();
                         }
@@ -2785,7 +2785,7 @@ namespace diao
                             continue;
                         }
                         int num = 0;
-                        while (!this.fan_hui_ma)
+                        while (!this.returnCode)
                         {
                             if (this.com.IsOpen)
                             {
@@ -2810,7 +2810,7 @@ namespace diao
                                 goto label_8;
                         }
                     }
-                    while (this.fan_hui_shu == 8);
+                    while (this.returnValue == 8);
                 }
             }
             if (byteList.Count > 0)
@@ -2827,7 +2827,7 @@ namespace diao
                 {
                     if (!this.com.IsOpen)
                         return;
-                    this.fan_hui_ma = false;
+                    this.returnCode = false;
                     this.com.Write(byteList.ToArray(), 0, byteList.ToArray().Length);
                     byteList.Clear();
                 }
@@ -2836,7 +2836,7 @@ namespace diao
                     int num2 = (int)MessageBox.Show(ex.ToString());
                 }
                 int num3 = 0;
-                while (!this.fan_hui_ma)
+                while (!this.returnCode)
                 {
                     ++num3;
                     if (this.tingzhi)
@@ -2861,89 +2861,96 @@ namespace diao
 
         private void com_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            if (!this.com.IsOpen)
+            if (!com.IsOpen)
                 return;
-            if (this.com.BytesToRead == 1)
+            if (com.BytesToRead == 1)
             {
-                switch (this.com.ReadByte())
+                switch (com.ReadByte())
                 {
                     case 8:
-                        this.fan_hui_shu = 8;
-                        this.fan_hui_ma = true;
-                        this.com.DiscardInBuffer();
+                        returnValue = 8;
+                        returnCode = true;
+                        com.DiscardInBuffer();
                         break;
                     case 9:
-                        this.fan_hui_shu = 9;
-                        this.fan_hui_ma = true;
-                        this.com.DiscardInBuffer();
+                        returnValue = 9;
+                        returnCode = true;
+                        com.DiscardInBuffer();
                         break;
                 }
             }
-            else if (this.com.BytesToRead == 4)
+            else if (com.BytesToRead == 4)
             {
-                int num1 = this.com.ReadByte();
-                int num2 = this.com.ReadByte();
-                int num3 = this.com.ReadByte();
-                int num4 = this.com.ReadByte();
-                if (num1 == (int)byte.MaxValue && num2 == (int)byte.MaxValue && num3 == (int)byte.MaxValue && num4 == 254)
-                    this.fs_wc = true;
-                this.com.DiscardInBuffer();
+                int num1 = com.ReadByte();
+                int num2 = com.ReadByte();
+                int num3 = com.ReadByte();
+                int num4 = com.ReadByte();
+
+                //Check if bytes 1-3 are max value and byte 4 has the first bit 0
+                if (num1 == byte.MaxValue && num2 == byte.MaxValue && num3 == byte.MaxValue && num4 == 254)
+                    fs_wc = true;
+                
+                com.DiscardInBuffer();
             }
-            else if (this.com.BytesToRead == 3)
+            else if (com.BytesToRead == 3)
             {
-                if (this.qu_xinghao)
+                //This is likely something with serial or model number?
+                if (qu_xinghao)
                 {
-                    this.qu_xinghao = false;
-                    this.xing_hao = this.com.ReadByte().ToString() + ",";
-                    this.xing_hao = this.xing_hao + this.com.ReadByte().ToString() + ",";
-                    this.xing_hao += this.com.ReadByte().ToString();
-                    this.fan_hui_ma = true;
+                    qu_xinghao = false;
+                    modelNumber = com.ReadByte().ToString() + ",";
+                    modelNumber = modelNumber + com.ReadByte().ToString() + ",";
+                    modelNumber += com.ReadByte().ToString();
+                    returnCode = true;
                 }
-                this.com.DiscardInBuffer();
+                com.DiscardInBuffer();
             }
             else
             {
-                if (9 == this.com.ReadByte())
-                    this.fan_hui_ma = true;
-                this.com.DiscardInBuffer();
+                if (9 == com.ReadByte())
+                    returnCode = true;
+
+                com.DiscardInBuffer();
             }
         }
 
+        //"kaishi" - Start/Initialize
         private void but_kaishi_Click(object sender, EventArgs e)
         {
-            if (this.isRunning)
+            if (isRunning)
             {
-                this.zanting = true;
-                this.pause = !this.pause;
-                if (this.pause)
+                zanting = true;
+                pause = !pause;
+
+                if (pause)
                 {
-                    this.btn_start.Text = this.str7;
-                    this.ji_shi.Enabled = false;
+                    btn_start.Text = continueString;
+                    ji_shi.Enabled = false;
                 }
                 else
                 {
-                    this.btn_start.Text = this.str6;
-                    this.ji_shi.Enabled = true;
+                    btn_start.Text = pauseString;
+                    ji_shi.Enabled = true;
                 }
             }
             else if (!this.engraverConnected)
             {
-                int num1 = (int)MessageBox.Show(this.str22);
+                int num1 = (int)MessageBox.Show(str22);
             }
             else if (this.kuang)
             {
-                int num2 = (int)MessageBox.Show(this.str10);
+                int num2 = (int)MessageBox.Show(stopPreviewString);
             }
             else
             {
-                this.ji_shi.Enabled = true;
-                this.btn_start.Text = this.str6;
-                this.shi_jian_ = 0;
-                this.isRunning = true;
-                this.tingzhi = false;
-                this.shi_liang = this.pictureProcessingDropDownMenu.SelectedIndex == 2;
-                this.m_jd = 0;
-                this.jdt.Value = 0;
+                ji_shi.Enabled = true; //translates to Immediate or instant? No clue...
+                btn_start.Text = pauseString;
+                shi_jian_ = 0;
+                isRunning = true;
+                tingzhi = false;
+                shi_liang = this.pictureProcessingDropDownMenu.SelectedIndex == 2;
+                m_jd = 0;
+                jdt.Value = 0;
                 new Thread(new ThreadStart(this.dk)).Start();
                 this.jdt.Visible = true;
                 do
@@ -2951,7 +2958,7 @@ namespace diao
                     this.chuli_shijian();
                     Thread.Sleep(10);
                     if (this.shu_ > 0)
-                        this.jdt.Value = (int)((double)this.jin_du / (double)this.shu_ * 100.0);
+                        this.jdt.Value = (int)((double)this.progress / (double)this.shu_ * 100.0);
                 }
                 while (this.jdt.Value < 98);
                 this.jdt.Visible = false;
@@ -2971,10 +2978,10 @@ namespace diao
             List<Form1.Dian> dianList1 = new List<Form1.Dian>();
             List<Form1.Dian> dianList2 = new List<Form1.Dian>(dian);
             this.shu_ = this.dian.Count;
-            this.jin_du = 0;
+            this.progress = 0;
             for (int index2 = 0; index2 < this.shu_; ++index2)
             {
-                this.jin_du = index2;
+                this.progress = index2;
                 if (index2 == 0)
                 {
                     dianList1.Add(dianList2[0]);
@@ -3129,7 +3136,7 @@ namespace diao
             pause = false;
             zanting = false;
             jin_du_guan();
-            btn_start.Text = str8;
+            btn_start.Text = startString;
             hui_fu();
             ting_zhi();
         }
@@ -3165,12 +3172,12 @@ namespace diao
                 return false;
             }
             int num1 = 300;
-            this.fan_hui_ma = false;
+            this.returnCode = false;
             while (0 < num1--)
             {
                 Thread.Sleep(10);
                 this.chuli_shijian();
-                if (this.fan_hui_ma)
+                if (this.returnCode)
                     return true;
             }
             return false;
@@ -3196,12 +3203,12 @@ namespace diao
                 return false;
             }
             int num1 = 300;
-            this.fan_hui_ma = false;
+            this.returnCode = false;
             while (0 < num1--)
             {
                 Thread.Sleep(10);
                 this.chuli_shijian();
-                if (this.fan_hui_ma)
+                if (this.returnCode)
                     return true;
             }
             return false;
@@ -3333,7 +3340,7 @@ namespace diao
         private void SetUpToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new set().Show();
-            set.m_formA.zhi(this.ruo, this.hang_yan_shi, this.TIM_chong_zhuang_zhi, this.BU, this.x_buchang, this.y_buchang, this.SS, this.MM1, this.KUAI, this.kuang_sd, this.xing_hao);
+            set.m_formA.zhi(this.ruo, this.hang_yan_shi, this.TIM_chong_zhuang_zhi, this.BU, this.x_buchang, this.y_buchang, this.SS, this.MM1, this.KUAI, this.kuang_sd, this.modelNumber);
         }
 
         private void pifu()
@@ -3436,7 +3443,7 @@ namespace diao
             this.shu_ = strArray.Length;
             for (int index = 0; index < strArray.Length; ++index)
             {
-                this.jin_du = index + 1;
+                this.progress = index + 1;
                 int num2 = strArray[index].LastIndexOf("\\");
                 int num3 = strArray[index].LastIndexOf(".");
                 string str = strArray[index].Substring(num2 + 1, num3 - num2 - 1);
@@ -3453,7 +3460,7 @@ namespace diao
         private void 批量转换到BMP格式ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = this.str11 + "|*.jpg;*.jpge;*.png;";
+            openFileDialog.Filter = this.pictureString + "|*.jpg;*.jpge;*.png;";
             openFileDialog.Multiselect = true;
             if (openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
@@ -3464,7 +3471,7 @@ namespace diao
                 this.chuli_shijian();
                 Thread.Sleep(10);
                 if (shu_ > 0)
-                    jdt.Value = (int)(jin_du / shu_ * 100.0);
+                    jdt.Value = (int)(progress / shu_ * 100.0);
             }
             while (jdt.Value < 100);
             jdt.Visible = false;
@@ -3523,12 +3530,12 @@ namespace diao
                 return false;
             }
             int num1 = 300;
-            this.fan_hui_ma = false;
+            this.returnCode = false;
             while (0 < num1--)
             {
                 Thread.Sleep(10);
                 this.chuli_shijian();
-                if (fan_hui_ma)
+                if (returnCode)
                     return true;
             }
             return false;
