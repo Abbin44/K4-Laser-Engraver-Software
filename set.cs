@@ -84,7 +84,7 @@ namespace diao
 
     private void button1_Click(object sender, EventArgs e)
     {
-      Form1.m_Form1.she_zhi(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
+      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
       this.Close();
     }
 
@@ -101,7 +101,7 @@ namespace diao
         this.textBox13.Text = num.ToString();
         this.textBox10.Text = num.ToString();
       }
-      Form1.m_Form1.she_zhi(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
+      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
     }
 
     private void but_jia_kuang_Click(object sender, EventArgs e)
@@ -113,7 +113,7 @@ namespace diao
         this.textBox13.Text = num.ToString();
         this.textBox10.Text = num.ToString();
       }
-      Form1.m_Form1.she_zhi(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
+      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
     }
 
     private void button2_Click(object sender, EventArgs e)
@@ -125,7 +125,7 @@ namespace diao
         this.textBox12.Text = num.ToString();
         this.textBox1.Text = ((int) (50.0 + (double) (150 * num) * 0.1)).ToString();
       }
-      Form1.m_Form1.she_zhi(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
+      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
     }
 
     private void but_jia_ruo_Click(object sender, EventArgs e)
@@ -137,7 +137,7 @@ namespace diao
         this.textBox12.Text = num.ToString();
         this.textBox1.Text = ((int) (50.0 + (double) (150 * num) * 0.1)).ToString();
       }
-      Form1.m_Form1.she_zhi(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
+      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
     }
 
     protected override void Dispose(bool disposing)

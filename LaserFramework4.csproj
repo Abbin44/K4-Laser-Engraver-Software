@@ -67,7 +67,9 @@
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Form1.resx" />
+    <EmbeddedResource Include="Form1.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx" />
     <EmbeddedResource Include="set.resx" />
   </ItemGroup>

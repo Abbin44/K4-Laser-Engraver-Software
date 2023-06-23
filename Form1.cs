@@ -36,15 +36,15 @@ namespace diao
         private double fen_bian_lv = 0.05;
         private double fen_bian_lv_in = 0.001968505;
         private Bitmap tu_yuan = new Bitmap(1, 1);
-        private Bitmap tu_suofang = new Bitmap(1, 1);
+        private Bitmap pictureScaling = new Bitmap(1, 1);
         private Bitmap tu_diaoke = new Bitmap(1, 1);
         private Bitmap bei_jing;
         private bool engraverConnected;
         private int fang_shi = 1;
         private double bi;
         private bool jinru;
-        private bool tu_dakai;
-        private bool wenzi_dakai;
+        private bool openImage;
+        private bool openText;
         private bool z_anxia;
         private int z_x;
         private int z_y;
@@ -56,8 +56,8 @@ namespace diao
         private int you;
         private int shang;
         private int xia;
-        private bool kuang;
-        private bool mm_in = true;
+        private bool showingPreview;
+        private bool millimeters = true;
         private bool fan_se;
         private bool returnCode;
         private int returnValue;
@@ -126,12 +126,12 @@ namespace diao
         private Bitmap image;
         private IContainer components;
         private SkinPanel change_half;
-        private SkinButton but_jingxiang;
-        private SkinButton but_fanzhuan;
+        private SkinButton btnFlip;
+        private SkinButton btnRotate;
         private SkinButton but_trash;
         private SkinButton but_fanse;
         private SkinButton btn_mmToInch;
-        private SkinButton but_ziti;
+        private SkinButton btnAddText;
         private SkinButton btn_disconnectConnectDevice;
         private SkinButton btnOpenPicture;
         private SkinButton btn_start;
@@ -146,17 +146,17 @@ namespace diao
         private SkinLabel skinLabel5;
         private SkinButton btnPreview;
         private SkinButton btnResetCoordinates;
-        private SkinLabel skinLabel8;
-        private SkinLabel skinLabel9;
-        private SkinLabel biao_mm1;
-        private SkinLabel biao_mm2;
+        private SkinLabel widthLabel;
+        private SkinLabel heightLabel;
+        private SkinLabel mmInchLabel1;
+        private SkinLabel mmInchLabel2;
         private SkinButton btn_save;
         private SerialPort com;
         private SkinPanel skinPanel2;
         private OpenFileDialog bmpFileDialog;
         private SkinPictureBox hua_ban;
         private System.Windows.Forms.Timer ding_cl;
-        private TextBox text_wenzi;
+        private TextBox txtBoxText;
         private Panel panel6;
         private Label label17;
         private Label label16;
@@ -167,12 +167,12 @@ namespace diao
         private ListBox listBox1;
         private TrackBar trackBar5;
         private SkinLabel skinLabel6;
-        private TextBox text_kuan;
-        private TextBox text_gao;
+        private TextBox txtBoxWidth;
+        private TextBox txtBoxHeight;
         private SkinPanel LED;
         private SkinButton but_tuoji;
         private SkinProgressBar jdt;
-        private SkinButton skinButton1;
+        private SkinButton btnSettings;
         private ContextMenuStrip menu;
         private ToolStripMenuItem chineseToolStripMenuItem;
         private ToolStripMenuItem englishToolStripMenuItem;
@@ -220,7 +220,7 @@ namespace diao
             new DifferenceEdgeDetector().ApplyInPlace(image);
             Bitmap bitmap3 = new MoveTowards(bitmap1, 10).Apply(image);
             invert.ApplyInPlace(bitmap3);
-            return new Bitmap((System.Drawing.Image)bitmap3);
+            return new Bitmap(bitmap3);
         }
 
         private void hui_fu() => this.BeginInvoke((Delegate)new Form1.MyInvoke(this.hf));
@@ -229,9 +229,9 @@ namespace diao
 
         private void hf()
         {
-            this.tu_diaoke = new Bitmap((System.Drawing.Image)this.hf_bmp);
-            this.hua_ban.BackgroundImage = (System.Drawing.Image)this.tu_diaoke;
-            this.hua_ban.Refresh();
+            tu_diaoke = new Bitmap(hf_bmp);
+            hua_ban.BackgroundImage = tu_diaoke;
+            hua_ban.Refresh();
         }
 
         private void shua_xin() => this.BeginInvoke((Delegate)new Form1.MyInvoke(this.sx));
@@ -263,7 +263,7 @@ namespace diao
         {
             double num1;
             double num2;
-            if (this.mm_in)
+            if (this.millimeters)
             {
                 num1 = (double)(this.you - this.zuo) * this.fen_bian_lv;
                 num2 = (double)(this.xia - this.shang) * this.fen_bian_lv;
@@ -273,8 +273,8 @@ namespace diao
                 num1 = (double)(this.you - this.zuo) * this.fen_bian_lv_in;
                 num2 = (double)(this.xia - this.shang) * this.fen_bian_lv_in;
             }
-            this.text_kuan.Text = num1.ToString();
-            this.text_gao.Text = num2.ToString();
+            this.txtBoxWidth.Text = num1.ToString();
+            this.txtBoxHeight.Text = num2.ToString();
         }
 
         private void zi_ti()
@@ -290,20 +290,20 @@ namespace diao
                 style = FontStyle.Bold | FontStyle.Italic;
             try
             {
-                this.text_wenzi.Font = new Font(this.listBox1.Text, (float)(this.trackBar5.Value * 2), style, GraphicsUnit.Pixel);
+                this.txtBoxText.Font = new Font(this.listBox1.Text, (float)(this.trackBar5.Value * 2), style, GraphicsUnit.Pixel);
             }
             catch (Exception ex)
             {
                 int num = (int)MessageBox.Show(ex.ToString());
             }
-            this.text_wenzi.Visible = true;
-            this.text_wenzi.Focus();
+            this.txtBoxText.Visible = true;
+            this.txtBoxText.Focus();
             this.chi_cun();
         }
 
         private Bitmap qu_tu()
         {
-            Bitmap bitmap = new Bitmap((int)((double)this.text_wenzi.Width * ((double)this.xian_k / (double)this.change_half.Width)), (int)((double)this.text_wenzi.Height * ((double)this.xian_k / (double)this.change_half.Width)));
+            Bitmap bitmap = new Bitmap((int)((double)this.txtBoxText.Width * ((double)this.xian_k / (double)this.change_half.Width)), (int)((double)this.txtBoxText.Height * ((double)this.xian_k / (double)this.change_half.Width)));
             Graphics graphics = Graphics.FromImage((System.Drawing.Image)bitmap);
             graphics.Clear(Color.White);
             FontStyle style = FontStyle.Regular;
@@ -324,23 +324,23 @@ namespace diao
             {
                 int num = (int)MessageBox.Show(ex.ToString());
             }
-            graphics.DrawString(this.text_wenzi.Text, font, Brushes.Black, 0.0f, 0.0f);
+            graphics.DrawString(this.txtBoxText.Text, font, Brushes.Black, 0.0f, 0.0f);
             graphics.Dispose();
             return bitmap;
         }
 
         private void chi_cun()
         {
-            if (this.text_wenzi.Text == "")
+            if (this.txtBoxText.Text == "")
                 return;
-            SizeF sizeF = this.text_wenzi.CreateGraphics().MeasureString(this.text_wenzi.Text, this.text_wenzi.Font);
-            this.text_wenzi.Size = new Size((int)sizeF.Width, (int)sizeF.Height);
+            SizeF sizeF = this.txtBoxText.CreateGraphics().MeasureString(this.txtBoxText.Text, this.txtBoxText.Font);
+            this.txtBoxText.Size = new Size((int)sizeF.Width, (int)sizeF.Height);
         }
 
         private void cl()
         {
             this.jinru = true;
-            this.tu_suofang = this.suofang(this.tu_yuan, (int)((double)this.hua_ban.Width * ((double)this.xian_k / (double)this.change_half.Width)), (int)((double)this.hua_ban.Height * ((double)this.xian_k / (double)this.change_half.Width)));
+            this.pictureScaling = this.suofang(this.tu_yuan, (int)((double)this.hua_ban.Width * ((double)this.xian_k / (double)this.change_half.Width)), (int)((double)this.hua_ban.Height * ((double)this.xian_k / (double)this.change_half.Width)));
             this.chu_li();
             this.ding_cl.Enabled = false;
             this.jinru = false;
@@ -365,9 +365,9 @@ namespace diao
 
         public void qu_bian()
         {
-            if (this.tu_diaoke == null)
+            if (tu_diaoke == null)
                 return;
-            Bitmap bitmap = new Bitmap((System.Drawing.Image)this.tu_diaoke);
+            Bitmap bitmap = new Bitmap(tu_diaoke);
             Rectangle rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
             BitmapData bitmapdata = bitmap.LockBits(rect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
             IntPtr scan0 = bitmapdata.Scan0;
@@ -384,30 +384,33 @@ namespace diao
                     if (destination[index] == (byte)0)
                     {
                         flag = true;
-                        this.shang = index / num1;
-                        this.xia = this.shang;
-                        this.zuo = index % num1 / 4;
-                        this.you = this.zuo;
+                        shang = index / num1;
+                        xia = shang;
+                        zuo = index % num1 / 4;
+                        you = zuo;
                     }
                 }
                 else if (destination[index] == (byte)0)
                 {
-                    if (this.zuo > index % num1 / 4)
-                        this.zuo = index % num1 / 4;
-                    if (this.you < index % num1 / 4)
-                        this.you = index % num1 / 4;
-                    if (this.xia < index / num1)
-                        this.xia = index / num1;
+                    if (zuo > index % num1 / 4)
+                        zuo = index % num1 / 4;
+
+                    if (you < index % num1 / 4)
+                        you = index % num1 / 4;
+
+                    if (xia < index / num1)
+                        xia = index / num1;
                 }
             }
             bitmap.UnlockBits(bitmapdata);
         }
 
+
         public Bitmap hui_du(Bitmap bb)
         {
             if (bb == null)
-                return (Bitmap)null;
-            Bitmap bitmap = new Bitmap((System.Drawing.Image)bb);
+                return null;
+            Bitmap bitmap = new Bitmap(bb);
             Rectangle rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
             BitmapData bitmapdata = bitmap.LockBits(rect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
             IntPtr scan0 = bitmapdata.Scan0;
@@ -415,30 +418,37 @@ namespace diao
             byte[] destination = new byte[length];
             byte[] source = new byte[length];
             Marshal.Copy(scan0, destination, 0, length);
+
             for (int index = 0; index < destination.Length; index += 4)
             {
-                int num = ((int)destination[index] * 30 + (int)destination[index + 1] * 59 + (int)destination[index + 2] * 11) / 100;
-                if (num > (int)byte.MaxValue)
-                    num = (int)byte.MaxValue;
+                //Multiply red channel by 30, green channel by 59, and blue by 11. Sum them together and divide by 100 to get a new brightness.
+                int num = (destination[index] * 30 + destination[index + 1] * 59 + destination[index + 2] * 11) / 100;
+
+                //This if block clamps num to 255
+                if (num > byte.MaxValue)
+                    num = byte.MaxValue;
                 else if (num < 0)
                     num = 0;
-                if (destination[index + 3] == (byte)0)
-                    num = (int)byte.MaxValue;
+
+                if (destination[index + 3] == 0)
+                    num = byte.MaxValue;
+
                 source[index] = (byte)num;
                 source[index + 1] = (byte)num;
                 source[index + 2] = (byte)num;
                 source[index + 3] = byte.MaxValue;
             }
+
             Marshal.Copy(source, 0, scan0, length);
             bitmap.UnlockBits(bitmapdata);
             return bitmap;
         }
 
-        public Bitmap hei_bai(int zhi)
+        public Bitmap blackWhite(int zhi)
         {
-            if (this.tu_suofang == null)
-                return (Bitmap)null;
-            Bitmap bitmap = new Bitmap((System.Drawing.Image)this.tu_suofang);
+            if (pictureScaling == null)
+                return null;
+            Bitmap bitmap = new Bitmap(pictureScaling);
             Rectangle rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
             BitmapData bitmapdata = bitmap.LockBits(rect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
             IntPtr scan0 = bitmapdata.Scan0;
@@ -803,13 +813,13 @@ namespace diao
             switch (fang_shi)
             {
                 case 1:
-                    tu_diaoke = hei_bai(128);
+                    tu_diaoke = blackWhite(128);
                     break;
                 case 2:
-                    tu_diaoke = dou_dong(tu_suofang, 30);
+                    tu_diaoke = dou_dong(pictureScaling, 30);
                     break;
                 case 3:
-                    this.tu_diaoke = this.hei_bai(128);
+                    this.tu_diaoke = this.blackWhite(128);
                     Bitmap bb = new Bitmap(this.tu_diaoke.Width + 4, this.tu_diaoke.Height + 4);
                     Graphics graphics = Graphics.FromImage((System.Drawing.Image)bb);
                     graphics.Clear(Color.White);
@@ -819,21 +829,22 @@ namespace diao
                     bb.Dispose();
                     break;
                 case 4:
-                    this.tu_diaoke = this.cartoonPaint_MouseDown(this.tu_suofang);
+                    this.tu_diaoke = this.cartoonPaint_MouseDown(this.pictureScaling);
                     this.tu_diaoke = this.dou_dong(this.tu_diaoke, 0);
                     break;
             }
-            if (this.fan_se)
-                this.tu_diaoke = this.fanse(this.tu_diaoke);
-            this.qu_bian();
-            this.shua_xin_kg();
-            this.hua_ban.BackgroundImage = (System.Drawing.Image)this.tu_diaoke;
+            if (fan_se)
+                tu_diaoke = fanse(tu_diaoke);
+            qu_bian();
+            shua_xin_kg();
+            hua_ban.BackgroundImage = tu_diaoke;
         }
 
+        //Never used?
         public static int GetComNum()
         {
             int comNum = -1;
-            foreach (string str in Form1.GetHarewareInfo(Form1.HardwareEnum.Win32_PnPEntity, "Name"))
+            foreach (string str in GetHarewareInfo(HardwareEnum.Win32_PnPEntity, "Name"))
             {
                 if (str.Length >= 23 && str.Contains("CH340"))
                 {
@@ -872,75 +883,69 @@ namespace diao
             }
         }
 
-        private bool lianjie()
+        private bool connection()
         {
-            this.returnCode = false;
+            returnCode = false;
             bool flag = false;
             foreach (string portName in SerialPort.GetPortNames())
             {
                 try
                 {
-                    this.com.Close();
-                    this.com.PortName = portName;
-                    this.com.Open();
-                    this.com.Write(new byte[4]
-                    {
-            (byte) 10,
-            (byte) 0,
-            (byte) 4,
-            (byte) 0
-                    }, 0, 4);
+                    com.Close();
+                    com.PortName = portName;
+                    com.Open();
+                    com.Write(new byte[4]{10, 0, 4, 0 }, 0, 4);
                     int num = 40;
                     while (num-- > 0)
                     {
                         Application.DoEvents();
                         Thread.Sleep(10);
-                        if (this.returnCode)
+                        if (returnCode)
                             return true;
                     }
                 }
                 catch (Exception ex)
                 {
-                    this.com.Close();
+                    com.Close();
                 }
             }
-            this.com.Close();
+            com.Close();
             return flag;
         }
 
         public Form1()
         {
-            this.InitializeComponent();
-            Form1.m_Form1 = this;
+            InitializeComponent();
+            m_Form1 = this;
         }
 
-        public bool she_zhi()
+        public bool settings()
         {
-            if (!this.com.IsOpen)
+            if (!com.IsOpen)
                 return false;
             try
             {
-                this.com.Write(new byte[19]
+                com.Write(new byte[19]
                 {
-          (byte) 40,
-          (byte) 0,
-          (byte) 19,
-          this.ruo,
-          (byte) (this.hang_yan_shi >> 8),
-          (byte) this.hang_yan_shi,
-          (byte) (this.TIM_chong_zhuang_zhi >> 8),
-          (byte) this.TIM_chong_zhuang_zhi,
-          this.BU,
-          this.x_buchang,
-          this.y_buchang,
-          (byte) (this.SS >> 8),
-          (byte) this.SS,
-          (byte) (this.MM1 >> 8),
-          (byte) this.MM1,
-          (byte) (this.KUAI >> 8),
-          (byte) this.KUAI,
-          (byte) (this.kuang_sd >> 8),
-          (byte) this.kuang_sd
+                40,
+                0,
+                19,
+                ruo,
+                (byte) (hang_yan_shi >> 8),
+                (byte) hang_yan_shi,
+                (byte) (TIM_chong_zhuang_zhi >> 8),
+                (byte) TIM_chong_zhuang_zhi,
+                BU,
+                x_buchang,
+                y_buchang,
+                (byte) (SS >> 8),
+                (byte) SS,
+                (byte) (MM1 >> 8),
+                (byte) MM1,
+                (byte) (KUAI >> 8),
+                (byte) KUAI,
+                (byte) (kuang_sd >> 8),
+                (byte) kuang_sd
                 }, 0, 19);
             }
             catch (Exception ex)
@@ -949,18 +954,20 @@ namespace diao
                 return false;
             }
             int num1 = 10;
-            this.returnCode = false;
+            returnCode = false;
+            //Sleep for 10ms 10 times
             while (0 < num1--)
             {
                 Thread.Sleep(10);
-                this.chuli_shijian();
-                if (this.returnCode)
+                chuli_shijian();
+
+                if (returnCode)
                     return true;
             }
             return false;
         }
 
-        public void she_zhi(
+        public void writeSettings(
           byte ruo_,
           int hang_yan_shi_,
           int TIM_chong_zhuang_zhi_,
@@ -984,7 +991,7 @@ namespace diao
             this.KUAI = KUAI_;
             this.kuang_sd = kuang_sd_;
             this.modelNumber = xh;
-            this.she_zhi();
+            this.settings();
             this.xinghao();
             this.pifu();
             this.ini.IniWriteValue("set", "ruo", this.ruo.ToString());
@@ -1043,36 +1050,39 @@ namespace diao
                     this.but_tuoji.Visible = true;
                     break;
             }
-            this.ini.IniWriteValue("modelNumber", "modelNumber", this.modelNumber);
+            ini.IniWriteValue("modelNumber", "modelNumber", modelNumber);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.change_half.MouseWheel += new MouseEventHandler(this.hua_ban_MouseWheel);
-            this.hua_ban.MouseWheel += new MouseEventHandler(this.hua_ban_MouseWheel);
+            change_half.MouseWheel += new MouseEventHandler(hua_ban_MouseWheel);
+            hua_ban.MouseWheel += new MouseEventHandler(hua_ban_MouseWheel);
             FontFamily[] families = new InstalledFontCollection().Families;
+
             for (int length = families.Length; length > 0; --length)
-                this.listBox1.Items.Add((object)families[length - 1].Name);
-            this.listBox1.SelectedIndex = 0;
-            this.pictureProcessingDropDownMenu.SelectedIndex = 0;
-            this.text_wenzi.Visible = false;
-            if (this.ini.ExistINIFile())
+                listBox1.Items.Add(families[length - 1].Name);
+
+            listBox1.SelectedIndex = 0;
+            pictureProcessingDropDownMenu.SelectedIndex = 0;
+            txtBoxText.Visible = false;
+
+            if (ini.ExistINIFile())
             {
-                this.ruo = Convert.ToByte(this.ini.IniReadValue("set", "ruo"));
-                this.hang_yan_shi = Convert.ToInt32(this.ini.IniReadValue("set", "hang_yan_shi"));
-                this.TIM_chong_zhuang_zhi = Convert.ToInt32(this.ini.IniReadValue("set", "TIM_chong_zhuang_zhi"));
-                this.BU = Convert.ToByte(this.ini.IniReadValue("set", "BU"));
-                this.x_buchang = Convert.ToByte(this.ini.IniReadValue("set", "x_buchang"));
-                this.y_buchang = Convert.ToByte(this.ini.IniReadValue("set", "y_buchang"));
-                this.SS = Convert.ToInt32(this.ini.IniReadValue("set", "SS"));
-                this.MM1 = Convert.ToInt32(this.ini.IniReadValue("set", "MM1"));
-                this.KUAI = Convert.ToInt32(this.ini.IniReadValue("set", "KUAI"));
-                this.kuang_sd = Convert.ToInt32(this.ini.IniReadValue("set", "kuang_sd"));
-                this.selectedLanguge = this.ini.IniReadValue("selectedLanguge", "selectedLanguge");
-                this.modelNumber = this.ini.IniReadValue("modelNumber", "modelNumber");
-                this.UpdateNewLanguage();
-                this.xinghao();
-                this.pifu();
+                ruo = Convert.ToByte(this.ini.IniReadValue("set", "ruo"));
+                hang_yan_shi = Convert.ToInt32(this.ini.IniReadValue("set", "hang_yan_shi"));
+                TIM_chong_zhuang_zhi = Convert.ToInt32(this.ini.IniReadValue("set", "TIM_chong_zhuang_zhi"));
+                BU = Convert.ToByte(this.ini.IniReadValue("set", "BU"));
+                x_buchang = Convert.ToByte(this.ini.IniReadValue("set", "x_buchang"));
+                y_buchang = Convert.ToByte(this.ini.IniReadValue("set", "y_buchang"));
+                SS = Convert.ToInt32(this.ini.IniReadValue("set", "SS"));
+                MM1 = Convert.ToInt32(this.ini.IniReadValue("set", "MM1"));
+                KUAI = Convert.ToInt32(this.ini.IniReadValue("set", "KUAI"));
+                kuang_sd = Convert.ToInt32(this.ini.IniReadValue("set", "kuang_sd"));
+                selectedLanguge = this.ini.IniReadValue("selectedLanguge", "selectedLanguge");
+                modelNumber = this.ini.IniReadValue("modelNumber", "modelNumber");
+                UpdateNewLanguage();
+                xinghao();
+                pifu();
             }
             else
             {
@@ -1143,8 +1153,8 @@ namespace diao
                 this.btnPreview.Text = "预览位置";
                 this.btnResetCoordinates.Text = "重置坐标";
                 this.btnStop.Text = stopString;
-                this.skinLabel8.Text = "宽度";
-                this.skinLabel9.Text = "高度";
+                this.widthLabel.Text = "宽度";
+                this.heightLabel.Text = "高度";
                 this.btnOpenPicture.Text = "打开图片";
                 int selectedIndex = pictureProcessingDropDownMenu.SelectedIndex;
                 this.pictureProcessingDropDownMenu.Items.Clear();
@@ -1190,8 +1200,8 @@ namespace diao
                 skinLabel5.Text = "Carving depth:";
                 btnPreview.Text = "Preview Position";
                 btnResetCoordinates.Text = "Reset coordinates";
-                skinLabel8.Text = "Width";
-                skinLabel9.Text = "Height";
+                widthLabel.Text = "Width";
+                heightLabel.Text = "Height";
                 str23 = "Batch conversion to BMP";
                 lockAspectString = "Lock the aspect ratio";
                 stopString = "Stop";
@@ -1265,8 +1275,8 @@ namespace diao
                 this.skinLabel5.Text = "彫刻の深さ:";
                 this.btnPreview.Text = "プレビューの位置:";
                 this.btnResetCoordinates.Text = "座標をリセットする";
-                this.skinLabel8.Text = "幅:";
-                this.skinLabel9.Text = "高さ:";
+                this.widthLabel.Text = "幅:";
+                this.heightLabel.Text = "高さ:";
                 this.str23 = "BMPにロット変換する";
                 this.lockAspectString = "高さを測る";
                 this.stopString = "停止";
@@ -1308,7 +1318,7 @@ namespace diao
 
         private void hua_ban_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (!wenzi_dakai && !tu_dakai || isRunning || tj_zt || pictureProcessingDropDownMenu.SelectedIndex == 2)
+            if (!openText && !openImage || isRunning || tj_zt || pictureProcessingDropDownMenu.SelectedIndex == 2)
                 return;
             if (e.Delta > 0)
             {
@@ -1622,10 +1632,10 @@ namespace diao
                     graphics1.Dispose();
                     this.tu_yuan = new Bitmap((System.Drawing.Image)original1);
                     this.tu_yuan = this.hui_du(this.tu_yuan);
-                    this.tu_suofang = new Bitmap((System.Drawing.Image)this.tu_yuan);
-                    this.bi = (double)this.tu_suofang.Width / (double)this.tu_suofang.Height;
-                    this.hua_ban.Width = (int)((double)this.tu_suofang.Width * ((double)this.change_half.Width / (double)this.xian_k));
-                    this.hua_ban.Height = (int)((double)this.tu_suofang.Height * ((double)this.change_half.Width / (double)this.xian_k));
+                    this.pictureScaling = new Bitmap((System.Drawing.Image)this.tu_yuan);
+                    this.bi = (double)this.pictureScaling.Width / (double)this.pictureScaling.Height;
+                    this.hua_ban.Width = (int)((double)this.pictureScaling.Width * ((double)this.change_half.Width / (double)this.xian_k));
+                    this.hua_ban.Height = (int)((double)this.pictureScaling.Height * ((double)this.change_half.Width / (double)this.xian_k));
                     this.chu_li();
                     this.pictureProcessingDropDownMenu.SelectedIndex = 2;
                     break;
@@ -1642,10 +1652,10 @@ namespace diao
                     graphics2.Dispose();
                     this.tu_yuan = new Bitmap((System.Drawing.Image)original2);
                     this.tu_yuan = this.hui_du(this.tu_yuan);
-                    this.tu_suofang = new Bitmap((System.Drawing.Image)this.tu_yuan);
-                    this.bi = (double)this.tu_suofang.Width / (double)this.tu_suofang.Height;
-                    this.hua_ban.Width = (int)((double)this.tu_suofang.Width * ((double)this.change_half.Width / (double)this.xian_k));
-                    this.hua_ban.Height = (int)((double)this.tu_suofang.Height * ((double)this.change_half.Width / (double)this.xian_k));
+                    this.pictureScaling = new Bitmap((System.Drawing.Image)this.tu_yuan);
+                    this.bi = (double)this.pictureScaling.Width / (double)this.pictureScaling.Height;
+                    this.hua_ban.Width = (int)((double)this.pictureScaling.Width * ((double)this.change_half.Width / (double)this.xian_k));
+                    this.hua_ban.Height = (int)((double)this.pictureScaling.Height * ((double)this.change_half.Width / (double)this.xian_k));
                     this.chu_li();
                     this.pictureProcessingDropDownMenu.SelectedIndex = 2;
                     break;
@@ -1668,10 +1678,10 @@ namespace diao
                         this.tu_yuan = this.suofang(this.tu_yuan, newW, newH);
                     }
                     this.tu_yuan = this.hui_du(this.tu_yuan);
-                    this.tu_suofang = new Bitmap((System.Drawing.Image)this.tu_yuan);
-                    this.bi = (double)this.tu_suofang.Width / (double)this.tu_suofang.Height;
-                    this.hua_ban.Width = (int)((double)this.tu_suofang.Width * ((double)this.change_half.Width / (double)this.xian_k));
-                    this.hua_ban.Height = (int)((double)this.tu_suofang.Height * ((double)this.change_half.Width / (double)this.xian_k));
+                    this.pictureScaling = new Bitmap((System.Drawing.Image)this.tu_yuan);
+                    this.bi = (double)this.pictureScaling.Width / (double)this.pictureScaling.Height;
+                    this.hua_ban.Width = (int)((double)this.pictureScaling.Width * ((double)this.change_half.Width / (double)this.xian_k));
+                    this.hua_ban.Height = (int)((double)this.pictureScaling.Height * ((double)this.change_half.Width / (double)this.xian_k));
                     this.chu_li();
                     this.pictureProcessingDropDownMenu.SelectedIndex = 0;
                     break;
@@ -1679,35 +1689,38 @@ namespace diao
             this.qi_dian = this.hua_ban.Location;
             this.hua_ban.Location = new System.Drawing.Point((this.change_half.Width - this.hua_ban.Width) / 2, (this.change_half.Height - this.hua_ban.Height) / 2);
             this.yidong((int)((double)(this.hua_ban.Location.X - this.qi_dian.X) * ((double)this.xian_k / (double)this.change_half.Width)), (int)((double)(this.hua_ban.Location.Y - this.qi_dian.Y) * ((double)this.xian_k / (double)this.change_half.Width)));
-            this.tu_dakai = true;
+            this.openImage = true;
         }
 
         private void but_dakai_Click(object sender, EventArgs e)
         {
-            if (this.isRunning || this.bmpFileDialog.ShowDialog() != DialogResult.OK)
+            if (isRunning || bmpFileDialog.ShowDialog() != DialogResult.OK)
                 return;
-            this.da_kai(this.bmpFileDialog.FileName);
+
+            da_kai(bmpFileDialog.FileName);
         }
 
         private void but_lianjie_Click(object sender, EventArgs e)
         {
-            if (this.engraverConnected)
+            if (engraverConnected)
             {
-                if (this.kuang)
-                    this.guan_kuang();
-                if (this.isRunning)
-                    this.ting_zhi();
-                this.engraverConnected = false;
-                this.btn_disconnectConnectDevice.Text = this.connectDeviceString;
-                this.com.Close();
-                this.LED.Visible = false;
+                if (showingPreview)
+                    guan_kuang();
+
+                if (isRunning)
+                    ting_zhi();
+
+                engraverConnected = false;
+                btn_disconnectConnectDevice.Text = connectDeviceString;
+                com.Close();
+                LED.Visible = false;
             }
-            else if (this.lianjie())
+            else if (this.connection())
             {
                 this.engraverConnected = true;
                 this.btn_disconnectConnectDevice.Text = this.disconnectDeviceString;
                 this.LED.Visible = true;
-                this.she_zhi();
+                this.settings();
                 this.qu_xinghao = true;
                 this.du_ban_ben();
                 this.dao_yuandian();
@@ -1744,11 +1757,11 @@ namespace diao
 
         private void but_ziti_Click(object sender, EventArgs e)
         {
-            if (this.isRunning || this.text_wenzi.Visible)
+            if (this.isRunning || this.txtBoxText.Visible)
                 return;
-            this.text_wenzi.Location = new System.Drawing.Point(this.hua_ban.Location.X, this.hua_ban.Location.Y);
-            this.text_wenzi.Visible = true;
-            this.text_wenzi.Focus();
+            this.txtBoxText.Location = new System.Drawing.Point(this.hua_ban.Location.X, this.hua_ban.Location.Y);
+            this.txtBoxText.Visible = true;
+            this.txtBoxText.Focus();
         }
 
         private void label16_MouseDown(object sender, MouseEventArgs e)
@@ -1853,27 +1866,35 @@ namespace diao
             this.yidong((int)((double)(this.hua_ban.Location.X - this.qi_dian.X) * ((double)this.xian_k / (double)this.change_half.Width)), (int)((double)(this.hua_ban.Location.Y - this.qi_dian.Y) * ((double)this.xian_k / (double)this.change_half.Width)));
         }
 
+
+        //text_wenzi Is renamed to txtBoxText in designer. Edit event names of these below
         private void text_wenzi_MouseDown(object sender, MouseEventArgs e)
         {
-            this.an_xia_wz = true;
-            this.yi_dian = new System.Drawing.Point(e.X, e.Y);
+            an_xia_wz = true;
+            yi_dian = new System.Drawing.Point(e.X, e.Y);
         }
 
         private void text_wenzi_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!this.an_xia_wz)
+            if (!an_xia_wz)
                 return;
-            int x = this.text_wenzi.Location.X + (e.X - this.yi_dian.X);
-            int y = this.text_wenzi.Location.Y + (e.Y - this.yi_dian.Y);
-            if (x < this.hua_ban.Location.X)
-                x = this.hua_ban.Location.X;
-            if (x > this.hua_ban.Location.X + this.hua_ban.Width - this.text_wenzi.Width)
-                x = this.hua_ban.Location.X + this.hua_ban.Width - this.text_wenzi.Width;
-            if (y < this.hua_ban.Location.Y)
-                y = this.hua_ban.Location.Y;
-            if (y > this.hua_ban.Location.Y + this.hua_ban.Height - this.text_wenzi.Height)
-                y = this.hua_ban.Location.Y + this.hua_ban.Height - this.text_wenzi.Height;
-            this.text_wenzi.Location = new System.Drawing.Point(x, y);
+
+            int x = txtBoxText.Location.X + (e.X - yi_dian.X);
+            int y = txtBoxText.Location.Y + (e.Y - yi_dian.Y);
+
+            if (x < hua_ban.Location.X)
+                x = hua_ban.Location.X;
+
+            if (x > hua_ban.Location.X + hua_ban.Width - txtBoxText.Width)
+                x = hua_ban.Location.X + hua_ban.Width - txtBoxText.Width;
+
+            if (y < hua_ban.Location.Y)
+                y = hua_ban.Location.Y;
+
+            if (y > hua_ban.Location.Y + hua_ban.Height - txtBoxText.Height)
+                y = hua_ban.Location.Y + hua_ban.Height - txtBoxText.Height;
+
+            txtBoxText.Location = new System.Drawing.Point(x, y);
         }
 
         private void text_wenzi_MouseUp(object sender, MouseEventArgs e)
@@ -1885,23 +1906,23 @@ namespace diao
 
         public bool kai_kuang(int k, int g, int t_x, int t_y)
         {
-            if (!this.com.IsOpen)
+            if (!com.IsOpen)
                 return false;
             try
             {
-                this.com.Write(new byte[11]
+                com.Write(new byte[11]
                 {
-          (byte) 32,
-          (byte) 0,
-          (byte) 11,
-          (byte) (k >> 8),
-          (byte) k,
-          (byte) (g >> 8),
-          (byte) g,
-          (byte) (t_x >> 8),
-          (byte) t_x,
-          (byte) (t_y >> 8),
-          (byte) t_y
+                    (byte) 32,
+                    (byte) 0,
+                    (byte) 11,
+                    (byte) (k >> 8),
+                    (byte) k,
+                    (byte) (g >> 8),
+                    (byte) g,
+                    (byte) (t_x >> 8),
+                    (byte) t_x,
+                    (byte) (t_y >> 8),
+                    (byte) t_y
                 }, 0, 11);
             }
             catch (Exception ex)
@@ -1910,12 +1931,13 @@ namespace diao
                 return false;
             }
             int num1 = 300;
-            this.returnCode = false;
+            returnCode = false;
+
             while (0 < num1--)
             {
                 Thread.Sleep(10);
-                this.chuli_shijian();
-                if (this.returnCode)
+                chuli_shijian();
+                if (returnCode)
                     return true;
             }
             return false;
@@ -1923,16 +1945,16 @@ namespace diao
 
         public bool guan_kuang()
         {
-            if (!this.com.IsOpen)
+            if (!com.IsOpen)
                 return false;
             try
             {
-                this.com.Write(new byte[4]
+                com.Write(new byte[4]
                 {
-          (byte) 33,
-          (byte) 0,
-          (byte) 4,
-          (byte) 0
+                    33,
+                    0,
+                    4,
+                    0
                 }, 0, 4);
             }
             catch (Exception ex)
@@ -1940,13 +1962,16 @@ namespace diao
                 int num = (int)MessageBox.Show(ex.ToString());
                 return false;
             }
+
             int num1 = 300;
-            this.returnCode = false;
+            returnCode = false;
+
             while (0 < num1--)
             {
                 Thread.Sleep(10);
-                this.chuli_shijian();
-                if (this.returnCode)
+                chuli_shijian();
+
+                if (returnCode)
                     return true;
             }
             return false;
@@ -1960,20 +1985,23 @@ namespace diao
             }
             else
             {
-                if (this.isRunning || this.tj_zt || !this.tu_dakai && !this.wenzi_dakai)
+                if (isRunning || tj_zt || !openImage && !openText)
                     return;
-                this.kuang = !this.kuang;
-                if (this.kuang)
-                    this.kai_kuang(this.you - this.zuo, this.xia - this.shang, this.zuo, this.shang);
+
+                showingPreview = !showingPreview;
+
+                if (showingPreview)
+                    kai_kuang(you - zuo, xia - shang, zuo, shang);
                 else
-                    this.guan_kuang();
-                this.hua_ban.Refresh();
+                    guan_kuang();
+
+                hua_ban.Refresh();
             }
         }
 
         private void hua_ban_Paint(object sender, PaintEventArgs e)
         {
-            if (this.kuang)
+            if (this.showingPreview)
             {
                 double num = (double)this.change_half.Width / (double)this.xian_k;
                 int x = (int)((double)this.zuo * num);
@@ -1990,8 +2018,9 @@ namespace diao
 
         private void text_kuan_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (this.pictureProcessingDropDownMenu.SelectedIndex == 2)
+            if (pictureProcessingDropDownMenu.SelectedIndex == 2)
                 return;
+
             if (e.KeyChar == '\r')
             {
                 double num1 = (double)(this.you - this.zuo) / (double)(this.xia - this.shang);
@@ -1999,25 +2028,25 @@ namespace diao
                 int num3;
                 if (!this.lockAspectRatioChkBox.Checked)
                 {
-                    if (this.mm_in)
+                    if (this.millimeters)
                     {
-                        num2 = (int)(Convert.ToDouble(this.text_kuan.Text) / this.fen_bian_lv);
-                        num3 = (int)(Convert.ToDouble(this.text_gao.Text) / this.fen_bian_lv);
+                        num2 = (int)(Convert.ToDouble(this.txtBoxWidth.Text) / this.fen_bian_lv);
+                        num3 = (int)(Convert.ToDouble(this.txtBoxHeight.Text) / this.fen_bian_lv);
                     }
                     else
                     {
-                        num2 = (int)(Convert.ToDouble(this.text_kuan.Text) / this.fen_bian_lv_in);
-                        num3 = (int)(Convert.ToDouble(this.text_gao.Text) / this.fen_bian_lv_in);
+                        num2 = (int)(Convert.ToDouble(this.txtBoxWidth.Text) / this.fen_bian_lv_in);
+                        num3 = (int)(Convert.ToDouble(this.txtBoxHeight.Text) / this.fen_bian_lv_in);
                     }
                 }
-                else if (this.mm_in)
+                else if (this.millimeters)
                 {
-                    num2 = (int)(Convert.ToDouble(this.text_kuan.Text) / this.fen_bian_lv);
+                    num2 = (int)(Convert.ToDouble(this.txtBoxWidth.Text) / this.fen_bian_lv);
                     num3 = (int)((double)num2 / num1);
                 }
                 else
                 {
-                    num2 = (int)(Convert.ToDouble(this.text_kuan.Text) / this.fen_bian_lv_in);
+                    num2 = (int)(Convert.ToDouble(this.txtBoxWidth.Text) / this.fen_bian_lv_in);
                     num3 = (int)((double)num2 / num1);
                 }
                 double num4 = (double)this.tu_diaoke.Width / (double)(this.you - this.zuo);
@@ -2062,25 +2091,25 @@ namespace diao
                 int num3;
                 if (!this.lockAspectRatioChkBox.Checked)
                 {
-                    if (this.mm_in)
+                    if (this.millimeters)
                     {
-                        num2 = (int)(Convert.ToDouble(this.text_kuan.Text) / this.fen_bian_lv);
-                        num3 = (int)(Convert.ToDouble(this.text_gao.Text) / this.fen_bian_lv);
+                        num2 = (int)(Convert.ToDouble(this.txtBoxWidth.Text) / this.fen_bian_lv);
+                        num3 = (int)(Convert.ToDouble(this.txtBoxHeight.Text) / this.fen_bian_lv);
                     }
                     else
                     {
-                        num2 = (int)(Convert.ToDouble(this.text_kuan.Text) / this.fen_bian_lv_in);
-                        num3 = (int)(Convert.ToDouble(this.text_gao.Text) / this.fen_bian_lv_in);
+                        num2 = (int)(Convert.ToDouble(this.txtBoxWidth.Text) / this.fen_bian_lv_in);
+                        num3 = (int)(Convert.ToDouble(this.txtBoxHeight.Text) / this.fen_bian_lv_in);
                     }
                 }
-                else if (this.mm_in)
+                else if (this.millimeters)
                 {
-                    num3 = (int)(Convert.ToDouble(this.text_gao.Text) / this.fen_bian_lv);
+                    num3 = (int)(Convert.ToDouble(this.txtBoxHeight.Text) / this.fen_bian_lv);
                     num2 = (int)((double)num3 * num1);
                 }
                 else
                 {
-                    num3 = (int)(Convert.ToDouble(this.text_gao.Text) / this.fen_bian_lv_in);
+                    num3 = (int)(Convert.ToDouble(this.txtBoxHeight.Text) / this.fen_bian_lv_in);
                     num2 = (int)((double)num3 * num1);
                 }
                 double num4 = (double)this.tu_diaoke.Width / (double)(this.you - this.zuo);
@@ -2114,31 +2143,32 @@ namespace diao
             }
         }
 
-        private void but_yingcun_Click(object sender, EventArgs e)
+        private void btnMmToInch_Click(object sender, EventArgs e)
         {
-            if (!this.tu_dakai && !this.wenzi_dakai)
+            if (!openImage && !openText)
                 return;
-            if (this.mm_in)
+
+            if (millimeters)
             {
-                this.mm_in = false;
-                this.text_kuan.Text = (Convert.ToDouble(this.text_kuan.Text) * 0.0393701).ToString();
-                this.text_gao.Text = (Convert.ToDouble(this.text_gao.Text) * 0.0393701).ToString();
-                this.biao_mm1.Text = "in";
-                this.biao_mm2.Text = "in";
+                millimeters = false;
+                txtBoxWidth.Text = (Convert.ToDouble(txtBoxWidth.Text) * 0.0393701).ToString();
+                txtBoxHeight.Text = (Convert.ToDouble(txtBoxHeight.Text) * 0.0393701).ToString();
+                mmInchLabel1.Text = "in";
+                mmInchLabel2.Text = "in";
             }
             else
             {
-                this.mm_in = true;
-                this.text_kuan.Text = (Convert.ToDouble(this.text_kuan.Text) / 0.0393701).ToString();
-                this.text_gao.Text = (Convert.ToDouble(this.text_gao.Text) / 0.0393701).ToString();
-                this.biao_mm1.Text = "mm";
-                this.biao_mm2.Text = "mm";
+                millimeters = true;
+                txtBoxWidth.Text = (Convert.ToDouble(txtBoxWidth.Text) / 0.0393701).ToString();
+                txtBoxHeight.Text = (Convert.ToDouble(txtBoxHeight.Text) / 0.0393701).ToString();
+                mmInchLabel1.Text = "mm";
+                mmInchLabel2.Text = "mm";
             }
         }
 
         private void but_jingxiang_Click(object sender, EventArgs e)
         {
-            if (this.pictureProcessingDropDownMenu.SelectedIndex == 2 || this.isRunning || this.tj_zt || !this.tu_dakai && !this.wenzi_dakai)
+            if (this.pictureProcessingDropDownMenu.SelectedIndex == 2 || this.isRunning || this.tj_zt || !this.openImage && !this.openText)
                 return;
             this.tu_yuan.RotateFlip(RotateFlipType.RotateNoneFlipX);
             this.ding_cl_Tick((object)null, (EventArgs)null);
@@ -2146,19 +2176,19 @@ namespace diao
 
         private void but_fanzhuan_Click(object sender, EventArgs e)
         {
-            if (this.pictureProcessingDropDownMenu.SelectedIndex == 2 || this.isRunning || this.tj_zt || !this.tu_dakai && !this.wenzi_dakai)
+            if (this.pictureProcessingDropDownMenu.SelectedIndex == 2 || this.isRunning || this.tj_zt || !this.openImage && !this.openText)
                 return;
             this.tu_yuan.RotateFlip(RotateFlipType.Rotate90FlipNone);
-            this.tu_suofang = new Bitmap((System.Drawing.Image)this.tu_yuan);
-            this.bi = (double)this.tu_suofang.Width / (double)this.tu_suofang.Height;
-            this.hua_ban.Width = (int)((double)this.tu_suofang.Width * ((double)this.change_half.Width / (double)this.xian_k));
-            this.hua_ban.Height = (int)((double)this.tu_suofang.Height * ((double)this.change_half.Width / (double)this.xian_k));
+            this.pictureScaling = new Bitmap((System.Drawing.Image)this.tu_yuan);
+            this.bi = (double)this.pictureScaling.Width / (double)this.pictureScaling.Height;
+            this.hua_ban.Width = (int)((double)this.pictureScaling.Width * ((double)this.change_half.Width / (double)this.xian_k));
+            this.hua_ban.Height = (int)((double)this.pictureScaling.Height * ((double)this.change_half.Width / (double)this.xian_k));
             this.ding_cl_Tick((object)null, (EventArgs)null);
         }
 
         private void but_fanse_Click(object sender, EventArgs e)
         {
-            if (this.pictureProcessingDropDownMenu.SelectedIndex == 2 || this.isRunning || this.tj_zt || !this.tu_dakai && !this.wenzi_dakai)
+            if (this.pictureProcessingDropDownMenu.SelectedIndex == 2 || this.isRunning || this.tj_zt || !this.openImage && !this.openText)
                 return;
             this.fan_se = !this.fan_se;
             this.ding_cl_Tick((object)null, (EventArgs)null);
@@ -2166,13 +2196,13 @@ namespace diao
 
         private void but_shanchu_Click(object sender, EventArgs e)
         {
-            if (this.isRunning || this.tj_zt || !this.tu_dakai && !this.wenzi_dakai)
+            if (this.isRunning || this.tj_zt || !this.openImage && !this.openText)
                 return;
             this.tu_yuan = new Bitmap(1, 1);
-            this.tu_suofang = new Bitmap(1, 1);
+            this.pictureScaling = new Bitmap(1, 1);
             this.tu_diaoke = new Bitmap(1, 1);
-            this.tu_dakai = false;
-            this.wenzi_dakai = false;
+            this.openImage = false;
+            this.openText = false;
             this.hua_ban.Width = 20;
             this.hua_ban.Height = 20;
             this.hua_ban.BackgroundImage = (System.Drawing.Image)new Bitmap(20, 20);
@@ -2180,7 +2210,7 @@ namespace diao
 
         private void but_baocun_Click(object sender, EventArgs e)
         {
-            if (!this.tu_dakai && !this.wenzi_dakai || this.tu_diaoke == null)
+            if (!this.openImage && !this.openText || this.tu_diaoke == null)
                 return;
             DateTime dateTime = new DateTime();
             DateTime now = DateTime.Now;
@@ -2395,7 +2425,7 @@ namespace diao
             }
             else
             {
-                if (!this.tu_dakai && !this.wenzi_dakai || !this.engraverConnected || this.tj_zt || this.isRunning)
+                if (!this.openImage && !this.openText || !this.engraverConnected || this.tj_zt || this.isRunning)
                     return;
                 this.tj_zt = true;
                 new Thread(new ThreadStart(this.tuo_ji)).Start();
@@ -2937,7 +2967,7 @@ namespace diao
             {
                 int num1 = (int)MessageBox.Show(str22);
             }
-            else if (this.kuang)
+            else if (this.showingPreview)
             {
                 int num2 = (int)MessageBox.Show(stopPreviewString);
             }
@@ -3237,22 +3267,22 @@ namespace diao
             {
                 tiao_shendu.Value = 20;
                 skinLabel3.Text = "20%";
-                text_kuan.Enabled = true;
-                text_gao.Enabled = true;
+                txtBoxWidth.Enabled = true;
+                txtBoxHeight.Enabled = true;
             }
             else if (this.pictureProcessingDropDownMenu.SelectedIndex == 0 || pictureProcessingDropDownMenu.SelectedIndex == 1)
             {
                 tiao_shendu.Value = 10;
                 skinLabel3.Text = "10%";
-                text_kuan.Enabled = true;
-                text_gao.Enabled = true;
+                txtBoxWidth.Enabled = true;
+                txtBoxHeight.Enabled = true;
             }
             else
             {
                 tiao_shendu.Value = 10;
                 skinLabel3.Text = "10%";
-                text_kuan.Enabled = false;
-                text_gao.Enabled = false;
+                txtBoxWidth.Enabled = false;
+                txtBoxHeight.Enabled = false;
             }
         }
 
@@ -3348,13 +3378,13 @@ namespace diao
             if (!this.ini.ExistINIFile())
                 return; //If .ini file does not exist
 
-            string str = this.ini.IniReadValue("pi_fu", "pi_fu");
+            string str = ini.IniReadValue("pi_fu", "pi_fu");
             if (!File.Exists(str))
                 return;
-            Bitmap bitmap1 = new Bitmap(this.Width, this.Height);
+            Bitmap bitmap1 = new Bitmap(Width, Height);
             Bitmap bitmap2 = new Bitmap(str);
-            Graphics graphics = Graphics.FromImage((System.Drawing.Image)bitmap1);
-            graphics.DrawImage((System.Drawing.Image)bitmap2, 0, 0, this.Width, this.Height);
+            Graphics graphics = Graphics.FromImage(bitmap1);
+            graphics.DrawImage(bitmap2, 0, 0, Width, Height);
             graphics.Dispose();
             BackgroundImage = bitmap1;
         }
@@ -3378,14 +3408,14 @@ namespace diao
 
         private void text_wenzi_Leave(object sender, EventArgs e)
         {
-            if (!this.text_wenzi.Visible || this.panel6.Visible)
+            if (!this.txtBoxText.Visible || this.panel6.Visible)
                 return;
-            this.text_wenzi.Visible = false;
-            if (this.tu_dakai)
+            this.txtBoxText.Visible = false;
+            if (this.openImage)
             {
                 Bitmap bitmap = this.qu_tu();
-                int num1 = (int)((double)(this.text_wenzi.Location.X - this.hua_ban.Location.X) * (double)this.xian_k / (double)this.change_half.Width);
-                int num2 = (int)((double)(this.text_wenzi.Location.Y - this.hua_ban.Location.Y) * (double)this.xian_k / (double)this.change_half.Width);
+                int num1 = (int)((double)(this.txtBoxText.Location.X - this.hua_ban.Location.X) * (double)this.xian_k / (double)this.change_half.Width);
+                int num2 = (int)((double)(this.txtBoxText.Location.Y - this.hua_ban.Location.Y) * (double)this.xian_k / (double)this.change_half.Width);
                 for (int x = 0; x < bitmap.Width; ++x)
                 {
                     for (int y = 0; y < bitmap.Height; ++y)
@@ -3400,7 +3430,7 @@ namespace diao
             }
             else
             {
-                this.wenzi_dakai = true;
+                this.openText = true;
                 this.tu_yuan = this.qu_tu();
                 if (this.tu_yuan.Width > this.xian_k || this.tu_yuan.Height > this.xian_g)
                 {
@@ -3418,9 +3448,9 @@ namespace diao
                     }
                     this.tu_yuan = this.suofang(this.tu_yuan, newW, newH);
                 }
-                this.tu_suofang = new Bitmap((System.Drawing.Image)this.tu_yuan);
-                this.hua_ban.Width = (int)((double)this.tu_suofang.Width * ((double)this.change_half.Width / (double)this.xian_k));
-                this.hua_ban.Height = (int)((double)this.tu_suofang.Height * ((double)this.change_half.Width / (double)this.xian_k));
+                this.pictureScaling = new Bitmap((System.Drawing.Image)this.tu_yuan);
+                this.hua_ban.Width = (int)((double)this.pictureScaling.Width * ((double)this.change_half.Width / (double)this.xian_k));
+                this.hua_ban.Height = (int)((double)this.pictureScaling.Height * ((double)this.change_half.Width / (double)this.xian_k));
                 this.bi = (double)this.hua_ban.Width / (double)this.hua_ban.Height;
                 this.chu_li();
             }
@@ -3428,7 +3458,7 @@ namespace diao
 
         private void kg_bi_suoding_CheckedChanged(object sender, EventArgs e)
         {
-            if (!this.wenzi_dakai && !this.tu_dakai)
+            if (!this.openText && !this.openImage)
                 return;
             this.da_kai(this.bmpFileDialog.FileName);
         }
@@ -3490,7 +3520,7 @@ namespace diao
         {
             if (isRunning)
                 return;
-            this.panel6.Visible = true;
+            panel6.Visible = true;
         }
 
         private void text_kuan_Leave(object sender, EventArgs e) => this.text_kuan_KeyPress((object)null, new KeyPressEventArgs('\r'));
@@ -3510,19 +3540,15 @@ namespace diao
                 if (j)
                     com.Write(new byte[4]
                     {
-                        253,
-                        0,
-                        4,
-                        0
-                    }, 0, 4);
+                        253, 0, 4, 0
+                    }
+                    , 0, 4);
                 else
                     com.Write(new byte[4]
                     {
-                        254,
-                        0,
-                        4,
-                        0
-                    }, 0, 4);
+                        254, 0, 4, 0
+                    }
+                    , 0, 4);
             }
             catch (Exception ex)
             {
@@ -3530,11 +3556,13 @@ namespace diao
                 return false;
             }
             int num1 = 300;
-            this.returnCode = false;
+            returnCode = false;
+
             while (0 < num1--)
             {
                 Thread.Sleep(10);
-                this.chuli_shijian();
+                chuli_shijian();
+
                 if (returnCode)
                     return true;
             }
@@ -3565,7 +3593,7 @@ namespace diao
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.change_half = new CCWin.SkinControl.SkinPanel();
             this.jdt = new CCWin.SkinControl.SkinProgressBar();
-            this.text_wenzi = new System.Windows.Forms.TextBox();
+            this.txtBoxText = new System.Windows.Forms.TextBox();
             this.hua_ban = new CCWin.SkinControl.SkinPictureBox();
             this.panel6 = new System.Windows.Forms.Panel();
             this.skinLabel6 = new CCWin.SkinControl.SkinLabel();
@@ -3577,12 +3605,12 @@ namespace diao
             this.radioButton5 = new System.Windows.Forms.RadioButton();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.trackBar5 = new System.Windows.Forms.TrackBar();
-            this.but_jingxiang = new CCWin.SkinControl.SkinButton();
-            this.but_fanzhuan = new CCWin.SkinControl.SkinButton();
+            this.btnFlip = new CCWin.SkinControl.SkinButton();
+            this.btnRotate = new CCWin.SkinControl.SkinButton();
             this.but_trash = new CCWin.SkinControl.SkinButton();
             this.but_fanse = new CCWin.SkinControl.SkinButton();
             this.btn_mmToInch = new CCWin.SkinControl.SkinButton();
-            this.but_ziti = new CCWin.SkinControl.SkinButton();
+            this.btnAddText = new CCWin.SkinControl.SkinButton();
             this.btn_disconnectConnectDevice = new CCWin.SkinControl.SkinButton();
             this.btnOpenPicture = new CCWin.SkinControl.SkinButton();
             this.btn_start = new CCWin.SkinControl.SkinButton();
@@ -3597,20 +3625,20 @@ namespace diao
             this.skinLabel5 = new CCWin.SkinControl.SkinLabel();
             this.btnPreview = new CCWin.SkinControl.SkinButton();
             this.btnResetCoordinates = new CCWin.SkinControl.SkinButton();
-            this.skinLabel8 = new CCWin.SkinControl.SkinLabel();
-            this.skinLabel9 = new CCWin.SkinControl.SkinLabel();
-            this.biao_mm1 = new CCWin.SkinControl.SkinLabel();
-            this.biao_mm2 = new CCWin.SkinControl.SkinLabel();
+            this.widthLabel = new CCWin.SkinControl.SkinLabel();
+            this.heightLabel = new CCWin.SkinControl.SkinLabel();
+            this.mmInchLabel1 = new CCWin.SkinControl.SkinLabel();
+            this.mmInchLabel2 = new CCWin.SkinControl.SkinLabel();
             this.btn_save = new CCWin.SkinControl.SkinButton();
             this.com = new System.IO.Ports.SerialPort(this.components);
             this.skinPanel2 = new CCWin.SkinControl.SkinPanel();
             this.LED = new CCWin.SkinControl.SkinPanel();
             this.bmpFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ding_cl = new System.Windows.Forms.Timer(this.components);
-            this.text_kuan = new System.Windows.Forms.TextBox();
-            this.text_gao = new System.Windows.Forms.TextBox();
+            this.txtBoxWidth = new System.Windows.Forms.TextBox();
+            this.txtBoxHeight = new System.Windows.Forms.TextBox();
             this.but_tuoji = new CCWin.SkinControl.SkinButton();
-            this.skinButton1 = new CCWin.SkinControl.SkinButton();
+            this.btnSettings = new CCWin.SkinControl.SkinButton();
             this.menu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.chineseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.englishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -3655,7 +3683,7 @@ namespace diao
             this.change_half.BackColor = System.Drawing.Color.Transparent;
             this.change_half.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.change_half.Controls.Add(this.jdt);
-            this.change_half.Controls.Add(this.text_wenzi);
+            this.change_half.Controls.Add(this.txtBoxText);
             this.change_half.Controls.Add(this.hua_ban);
             this.change_half.ControlState = CCWin.SkinClass.ControlState.Normal;
             this.change_half.DownBack = null;
@@ -3684,24 +3712,24 @@ namespace diao
             this.jdt.TrackFore = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
             this.jdt.Visible = false;
             // 
-            // text_wenzi
+            // txtBoxText
             // 
-            this.text_wenzi.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.text_wenzi.Cursor = System.Windows.Forms.Cursors.SizeAll;
-            this.text_wenzi.Font = new System.Drawing.Font("SimSun", 32F);
-            this.text_wenzi.Location = new System.Drawing.Point(26, 6);
-            this.text_wenzi.Multiline = true;
-            this.text_wenzi.Name = "text_wenzi";
-            this.text_wenzi.Size = new System.Drawing.Size(79, 42);
-            this.text_wenzi.TabIndex = 2;
-            this.text_wenzi.Text = "ABC";
-            this.text_wenzi.Visible = false;
-            this.text_wenzi.TextChanged += new System.EventHandler(this.text_wenzi_TextChanged);
-            this.text_wenzi.DoubleClick += new System.EventHandler(this.text_wenzi_DoubleClick);
-            this.text_wenzi.Leave += new System.EventHandler(this.text_wenzi_Leave);
-            this.text_wenzi.MouseDown += new System.Windows.Forms.MouseEventHandler(this.text_wenzi_MouseDown);
-            this.text_wenzi.MouseMove += new System.Windows.Forms.MouseEventHandler(this.text_wenzi_MouseMove);
-            this.text_wenzi.MouseUp += new System.Windows.Forms.MouseEventHandler(this.text_wenzi_MouseUp);
+            this.txtBoxText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtBoxText.Cursor = System.Windows.Forms.Cursors.SizeAll;
+            this.txtBoxText.Font = new System.Drawing.Font("SimSun", 32F);
+            this.txtBoxText.Location = new System.Drawing.Point(26, 6);
+            this.txtBoxText.Multiline = true;
+            this.txtBoxText.Name = "txtBoxText";
+            this.txtBoxText.Size = new System.Drawing.Size(79, 42);
+            this.txtBoxText.TabIndex = 2;
+            this.txtBoxText.Text = "ABC";
+            this.txtBoxText.Visible = false;
+            this.txtBoxText.TextChanged += new System.EventHandler(this.text_wenzi_TextChanged);
+            this.txtBoxText.DoubleClick += new System.EventHandler(this.text_wenzi_DoubleClick);
+            this.txtBoxText.Leave += new System.EventHandler(this.text_wenzi_Leave);
+            this.txtBoxText.MouseDown += new System.Windows.Forms.MouseEventHandler(this.text_wenzi_MouseDown);
+            this.txtBoxText.MouseMove += new System.Windows.Forms.MouseEventHandler(this.text_wenzi_MouseMove);
+            this.txtBoxText.MouseUp += new System.Windows.Forms.MouseEventHandler(this.text_wenzi_MouseUp);
             // 
             // hua_ban
             // 
@@ -3841,45 +3869,45 @@ namespace diao
             this.trackBar5.Value = 16;
             this.trackBar5.Scroll += new System.EventHandler(this.trackBar5_Scroll);
             // 
-            // but_jingxiang
+            // btnFlip
             // 
-            this.but_jingxiang.BackColor = System.Drawing.Color.Transparent;
-            this.but_jingxiang.BaseColor = System.Drawing.Color.Transparent;
-            this.but_jingxiang.ControlState = CCWin.SkinClass.ControlState.Normal;
-            this.but_jingxiang.DownBack = null;
-            this.but_jingxiang.GlowColor = System.Drawing.Color.Aqua;
-            this.but_jingxiang.Image = ((System.Drawing.Image)(resources.GetObject("but_jingxiang.Image")));
-            this.but_jingxiang.ImageSize = new System.Drawing.Size(24, 24);
-            this.but_jingxiang.Location = new System.Drawing.Point(7, 31);
-            this.but_jingxiang.MouseBack = null;
-            this.but_jingxiang.Name = "but_jingxiang";
-            this.but_jingxiang.NormlBack = null;
-            this.but_jingxiang.Radius = 10;
-            this.but_jingxiang.RoundStyle = CCWin.SkinClass.RoundStyle.All;
-            this.but_jingxiang.Size = new System.Drawing.Size(40, 40);
-            this.but_jingxiang.TabIndex = 2;
-            this.but_jingxiang.UseVisualStyleBackColor = false;
-            this.but_jingxiang.Click += new System.EventHandler(this.but_jingxiang_Click);
+            this.btnFlip.BackColor = System.Drawing.Color.Transparent;
+            this.btnFlip.BaseColor = System.Drawing.Color.Transparent;
+            this.btnFlip.ControlState = CCWin.SkinClass.ControlState.Normal;
+            this.btnFlip.DownBack = null;
+            this.btnFlip.GlowColor = System.Drawing.Color.Aqua;
+            this.btnFlip.Image = ((System.Drawing.Image)(resources.GetObject("btnFlip.Image")));
+            this.btnFlip.ImageSize = new System.Drawing.Size(24, 24);
+            this.btnFlip.Location = new System.Drawing.Point(7, 31);
+            this.btnFlip.MouseBack = null;
+            this.btnFlip.Name = "btnFlip";
+            this.btnFlip.NormlBack = null;
+            this.btnFlip.Radius = 10;
+            this.btnFlip.RoundStyle = CCWin.SkinClass.RoundStyle.All;
+            this.btnFlip.Size = new System.Drawing.Size(40, 40);
+            this.btnFlip.TabIndex = 2;
+            this.btnFlip.UseVisualStyleBackColor = false;
+            this.btnFlip.Click += new System.EventHandler(this.but_jingxiang_Click);
             // 
-            // but_fanzhuan
+            // btnRotate
             // 
-            this.but_fanzhuan.BackColor = System.Drawing.Color.Transparent;
-            this.but_fanzhuan.BaseColor = System.Drawing.Color.Transparent;
-            this.but_fanzhuan.ControlState = CCWin.SkinClass.ControlState.Normal;
-            this.but_fanzhuan.DownBack = null;
-            this.but_fanzhuan.GlowColor = System.Drawing.Color.Aqua;
-            this.but_fanzhuan.Image = ((System.Drawing.Image)(resources.GetObject("but_fanzhuan.Image")));
-            this.but_fanzhuan.ImageSize = new System.Drawing.Size(24, 24);
-            this.but_fanzhuan.Location = new System.Drawing.Point(64, 31);
-            this.but_fanzhuan.MouseBack = null;
-            this.but_fanzhuan.Name = "but_fanzhuan";
-            this.but_fanzhuan.NormlBack = null;
-            this.but_fanzhuan.Radius = 10;
-            this.but_fanzhuan.RoundStyle = CCWin.SkinClass.RoundStyle.All;
-            this.but_fanzhuan.Size = new System.Drawing.Size(40, 40);
-            this.but_fanzhuan.TabIndex = 3;
-            this.but_fanzhuan.UseVisualStyleBackColor = false;
-            this.but_fanzhuan.Click += new System.EventHandler(this.but_fanzhuan_Click);
+            this.btnRotate.BackColor = System.Drawing.Color.Transparent;
+            this.btnRotate.BaseColor = System.Drawing.Color.Transparent;
+            this.btnRotate.ControlState = CCWin.SkinClass.ControlState.Normal;
+            this.btnRotate.DownBack = null;
+            this.btnRotate.GlowColor = System.Drawing.Color.Aqua;
+            this.btnRotate.Image = ((System.Drawing.Image)(resources.GetObject("btnRotate.Image")));
+            this.btnRotate.ImageSize = new System.Drawing.Size(24, 24);
+            this.btnRotate.Location = new System.Drawing.Point(64, 31);
+            this.btnRotate.MouseBack = null;
+            this.btnRotate.Name = "btnRotate";
+            this.btnRotate.NormlBack = null;
+            this.btnRotate.Radius = 10;
+            this.btnRotate.RoundStyle = CCWin.SkinClass.RoundStyle.All;
+            this.btnRotate.Size = new System.Drawing.Size(40, 40);
+            this.btnRotate.TabIndex = 3;
+            this.btnRotate.UseVisualStyleBackColor = false;
+            this.btnRotate.Click += new System.EventHandler(this.but_fanzhuan_Click);
             // 
             // but_trash
             // 
@@ -3939,27 +3967,27 @@ namespace diao
             this.btn_mmToInch.Size = new System.Drawing.Size(40, 40);
             this.btn_mmToInch.TabIndex = 7;
             this.btn_mmToInch.UseVisualStyleBackColor = false;
-            this.btn_mmToInch.Click += new System.EventHandler(this.but_yingcun_Click);
+            this.btn_mmToInch.Click += new System.EventHandler(this.btnMmToInch_Click);
             // 
-            // but_ziti
+            // btnAddText
             // 
-            this.but_ziti.BackColor = System.Drawing.Color.Transparent;
-            this.but_ziti.BaseColor = System.Drawing.Color.Transparent;
-            this.but_ziti.ControlState = CCWin.SkinClass.ControlState.Normal;
-            this.but_ziti.DownBack = null;
-            this.but_ziti.GlowColor = System.Drawing.Color.Aqua;
-            this.but_ziti.Image = ((System.Drawing.Image)(resources.GetObject("but_ziti.Image")));
-            this.but_ziti.ImageSize = new System.Drawing.Size(24, 24);
-            this.but_ziti.Location = new System.Drawing.Point(235, 31);
-            this.but_ziti.MouseBack = null;
-            this.but_ziti.Name = "but_ziti";
-            this.but_ziti.NormlBack = null;
-            this.but_ziti.Radius = 10;
-            this.but_ziti.RoundStyle = CCWin.SkinClass.RoundStyle.All;
-            this.but_ziti.Size = new System.Drawing.Size(40, 40);
-            this.but_ziti.TabIndex = 6;
-            this.but_ziti.UseVisualStyleBackColor = false;
-            this.but_ziti.Click += new System.EventHandler(this.but_ziti_Click);
+            this.btnAddText.BackColor = System.Drawing.Color.Transparent;
+            this.btnAddText.BaseColor = System.Drawing.Color.Transparent;
+            this.btnAddText.ControlState = CCWin.SkinClass.ControlState.Normal;
+            this.btnAddText.DownBack = null;
+            this.btnAddText.GlowColor = System.Drawing.Color.Aqua;
+            this.btnAddText.Image = ((System.Drawing.Image)(resources.GetObject("btnAddText.Image")));
+            this.btnAddText.ImageSize = new System.Drawing.Size(24, 24);
+            this.btnAddText.Location = new System.Drawing.Point(235, 31);
+            this.btnAddText.MouseBack = null;
+            this.btnAddText.Name = "btnAddText";
+            this.btnAddText.NormlBack = null;
+            this.btnAddText.Radius = 10;
+            this.btnAddText.RoundStyle = CCWin.SkinClass.RoundStyle.All;
+            this.btnAddText.Size = new System.Drawing.Size(40, 40);
+            this.btnAddText.TabIndex = 6;
+            this.btnAddText.UseVisualStyleBackColor = false;
+            this.btnAddText.Click += new System.EventHandler(this.but_ziti_Click);
             // 
             // btn_disconnectConnectDevice
             // 
@@ -4186,53 +4214,53 @@ namespace diao
             this.btnResetCoordinates.UseVisualStyleBackColor = false;
             this.btnResetCoordinates.Click += new System.EventHandler(this.but_chongzhi_Click);
             // 
-            // skinLabel8
+            // widthLabel
             // 
-            this.skinLabel8.AutoSize = true;
-            this.skinLabel8.BackColor = System.Drawing.Color.Transparent;
-            this.skinLabel8.BorderColor = System.Drawing.Color.White;
-            this.skinLabel8.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.skinLabel8.Location = new System.Drawing.Point(528, 503);
-            this.skinLabel8.Name = "skinLabel8";
-            this.skinLabel8.Size = new System.Drawing.Size(35, 17);
-            this.skinLabel8.TabIndex = 29;
-            this.skinLabel8.Text = "宽度:";
+            this.widthLabel.AutoSize = true;
+            this.widthLabel.BackColor = System.Drawing.Color.Transparent;
+            this.widthLabel.BorderColor = System.Drawing.Color.White;
+            this.widthLabel.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.widthLabel.Location = new System.Drawing.Point(528, 503);
+            this.widthLabel.Name = "widthLabel";
+            this.widthLabel.Size = new System.Drawing.Size(35, 17);
+            this.widthLabel.TabIndex = 29;
+            this.widthLabel.Text = "宽度:";
             // 
-            // skinLabel9
+            // heightLabel
             // 
-            this.skinLabel9.AutoSize = true;
-            this.skinLabel9.BackColor = System.Drawing.Color.Transparent;
-            this.skinLabel9.BorderColor = System.Drawing.Color.White;
-            this.skinLabel9.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.skinLabel9.Location = new System.Drawing.Point(651, 503);
-            this.skinLabel9.Name = "skinLabel9";
-            this.skinLabel9.Size = new System.Drawing.Size(35, 17);
-            this.skinLabel9.TabIndex = 30;
-            this.skinLabel9.Text = "高度:";
+            this.heightLabel.AutoSize = true;
+            this.heightLabel.BackColor = System.Drawing.Color.Transparent;
+            this.heightLabel.BorderColor = System.Drawing.Color.White;
+            this.heightLabel.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.heightLabel.Location = new System.Drawing.Point(651, 503);
+            this.heightLabel.Name = "heightLabel";
+            this.heightLabel.Size = new System.Drawing.Size(35, 17);
+            this.heightLabel.TabIndex = 30;
+            this.heightLabel.Text = "高度:";
             // 
-            // biao_mm1
+            // mmInchLabel1
             // 
-            this.biao_mm1.AutoSize = true;
-            this.biao_mm1.BackColor = System.Drawing.Color.Transparent;
-            this.biao_mm1.BorderColor = System.Drawing.Color.White;
-            this.biao_mm1.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.biao_mm1.Location = new System.Drawing.Point(614, 502);
-            this.biao_mm1.Name = "biao_mm1";
-            this.biao_mm1.Size = new System.Drawing.Size(30, 17);
-            this.biao_mm1.TabIndex = 31;
-            this.biao_mm1.Text = "mm";
+            this.mmInchLabel1.AutoSize = true;
+            this.mmInchLabel1.BackColor = System.Drawing.Color.Transparent;
+            this.mmInchLabel1.BorderColor = System.Drawing.Color.White;
+            this.mmInchLabel1.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.mmInchLabel1.Location = new System.Drawing.Point(614, 502);
+            this.mmInchLabel1.Name = "mmInchLabel1";
+            this.mmInchLabel1.Size = new System.Drawing.Size(30, 17);
+            this.mmInchLabel1.TabIndex = 31;
+            this.mmInchLabel1.Text = "mm";
             // 
-            // biao_mm2
+            // mmInchLabel2
             // 
-            this.biao_mm2.AutoSize = true;
-            this.biao_mm2.BackColor = System.Drawing.Color.Transparent;
-            this.biao_mm2.BorderColor = System.Drawing.Color.White;
-            this.biao_mm2.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.biao_mm2.Location = new System.Drawing.Point(736, 505);
-            this.biao_mm2.Name = "biao_mm2";
-            this.biao_mm2.Size = new System.Drawing.Size(30, 17);
-            this.biao_mm2.TabIndex = 32;
-            this.biao_mm2.Text = "mm";
+            this.mmInchLabel2.AutoSize = true;
+            this.mmInchLabel2.BackColor = System.Drawing.Color.Transparent;
+            this.mmInchLabel2.BorderColor = System.Drawing.Color.White;
+            this.mmInchLabel2.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.mmInchLabel2.Location = new System.Drawing.Point(736, 505);
+            this.mmInchLabel2.Name = "mmInchLabel2";
+            this.mmInchLabel2.Size = new System.Drawing.Size(30, 17);
+            this.mmInchLabel2.TabIndex = 32;
+            this.mmInchLabel2.Text = "mm";
             // 
             // btn_save
             // 
@@ -4298,23 +4326,23 @@ namespace diao
             this.ding_cl.Interval = 1000;
             this.ding_cl.Tick += new System.EventHandler(this.ding_cl_Tick);
             // 
-            // text_kuan
+            // txtBoxWidth
             // 
-            this.text_kuan.Location = new System.Drawing.Point(569, 500);
-            this.text_kuan.Name = "text_kuan";
-            this.text_kuan.Size = new System.Drawing.Size(39, 20);
-            this.text_kuan.TabIndex = 36;
-            this.text_kuan.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.text_kuan_KeyPress);
-            this.text_kuan.Leave += new System.EventHandler(this.text_kuan_Leave);
+            this.txtBoxWidth.Location = new System.Drawing.Point(569, 500);
+            this.txtBoxWidth.Name = "txtBoxWidth";
+            this.txtBoxWidth.Size = new System.Drawing.Size(39, 20);
+            this.txtBoxWidth.TabIndex = 36;
+            this.txtBoxWidth.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.text_kuan_KeyPress);
+            this.txtBoxWidth.Leave += new System.EventHandler(this.text_kuan_Leave);
             // 
-            // text_gao
+            // txtBoxHeight
             // 
-            this.text_gao.Location = new System.Drawing.Point(692, 500);
-            this.text_gao.Name = "text_gao";
-            this.text_gao.Size = new System.Drawing.Size(42, 20);
-            this.text_gao.TabIndex = 37;
-            this.text_gao.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.text_gao_KeyPress);
-            this.text_gao.Leave += new System.EventHandler(this.text_gao_Leave);
+            this.txtBoxHeight.Location = new System.Drawing.Point(692, 500);
+            this.txtBoxHeight.Name = "txtBoxHeight";
+            this.txtBoxHeight.Size = new System.Drawing.Size(42, 20);
+            this.txtBoxHeight.TabIndex = 37;
+            this.txtBoxHeight.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.text_gao_KeyPress);
+            this.txtBoxHeight.Leave += new System.EventHandler(this.text_gao_Leave);
             // 
             // but_tuoji
             // 
@@ -4336,25 +4364,25 @@ namespace diao
             this.but_tuoji.UseVisualStyleBackColor = false;
             this.but_tuoji.Click += new System.EventHandler(this.but_tuoji_Click);
             // 
-            // skinButton1
+            // btnSettings
             // 
-            this.skinButton1.BackColor = System.Drawing.Color.Transparent;
-            this.skinButton1.BaseColor = System.Drawing.Color.Transparent;
-            this.skinButton1.ControlState = CCWin.SkinClass.ControlState.Normal;
-            this.skinButton1.DownBack = null;
-            this.skinButton1.GlowColor = System.Drawing.Color.Aqua;
-            this.skinButton1.Image = ((System.Drawing.Image)(resources.GetObject("skinButton1.Image")));
-            this.skinButton1.ImageSize = new System.Drawing.Size(24, 24);
-            this.skinButton1.Location = new System.Drawing.Point(406, 31);
-            this.skinButton1.MouseBack = null;
-            this.skinButton1.Name = "skinButton1";
-            this.skinButton1.NormlBack = null;
-            this.skinButton1.Radius = 10;
-            this.skinButton1.RoundStyle = CCWin.SkinClass.RoundStyle.All;
-            this.skinButton1.Size = new System.Drawing.Size(40, 40);
-            this.skinButton1.TabIndex = 80;
-            this.skinButton1.UseVisualStyleBackColor = false;
-            this.skinButton1.Click += new System.EventHandler(this.skinButton1_Click);
+            this.btnSettings.BackColor = System.Drawing.Color.Transparent;
+            this.btnSettings.BaseColor = System.Drawing.Color.Transparent;
+            this.btnSettings.ControlState = CCWin.SkinClass.ControlState.Normal;
+            this.btnSettings.DownBack = null;
+            this.btnSettings.GlowColor = System.Drawing.Color.Aqua;
+            this.btnSettings.Image = ((System.Drawing.Image)(resources.GetObject("btnSettings.Image")));
+            this.btnSettings.ImageSize = new System.Drawing.Size(24, 24);
+            this.btnSettings.Location = new System.Drawing.Point(406, 31);
+            this.btnSettings.MouseBack = null;
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.NormlBack = null;
+            this.btnSettings.Radius = 10;
+            this.btnSettings.RoundStyle = CCWin.SkinClass.RoundStyle.All;
+            this.btnSettings.Size = new System.Drawing.Size(40, 40);
+            this.btnSettings.TabIndex = 80;
+            this.btnSettings.UseVisualStyleBackColor = false;
+            this.btnSettings.Click += new System.EventHandler(this.skinButton1_Click);
             // 
             // menu
             // 
@@ -4655,17 +4683,17 @@ namespace diao
             this.Controls.Add(this.label1);
             this.Controls.Add(this.shi_jian);
             this.Controls.Add(this.lockAspectRatioChkBox);
-            this.Controls.Add(this.skinButton1);
+            this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.but_tuoji);
             this.Controls.Add(this.panel6);
-            this.Controls.Add(this.text_gao);
-            this.Controls.Add(this.text_kuan);
+            this.Controls.Add(this.txtBoxHeight);
+            this.Controls.Add(this.txtBoxWidth);
             this.Controls.Add(this.skinPanel2);
             this.Controls.Add(this.btn_save);
-            this.Controls.Add(this.biao_mm2);
-            this.Controls.Add(this.biao_mm1);
-            this.Controls.Add(this.skinLabel9);
-            this.Controls.Add(this.skinLabel8);
+            this.Controls.Add(this.mmInchLabel2);
+            this.Controls.Add(this.mmInchLabel1);
+            this.Controls.Add(this.heightLabel);
+            this.Controls.Add(this.widthLabel);
             this.Controls.Add(this.btnResetCoordinates);
             this.Controls.Add(this.btnPreview);
             this.Controls.Add(this.skinLabel5);
@@ -4681,11 +4709,11 @@ namespace diao
             this.Controls.Add(this.btnOpenPicture);
             this.Controls.Add(this.btn_disconnectConnectDevice);
             this.Controls.Add(this.btn_mmToInch);
-            this.Controls.Add(this.but_ziti);
+            this.Controls.Add(this.btnAddText);
             this.Controls.Add(this.but_trash);
             this.Controls.Add(this.but_fanse);
-            this.Controls.Add(this.but_fanzhuan);
-            this.Controls.Add(this.but_jingxiang);
+            this.Controls.Add(this.btnRotate);
+            this.Controls.Add(this.btnFlip);
             this.Controls.Add(this.change_half);
             this.DropBack = false;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
