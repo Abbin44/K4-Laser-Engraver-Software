@@ -63,7 +63,7 @@ namespace diao
         private int returnValue;
         private bool fs_wc;
         private int m_jd;
-        private bool tingzhi;
+        private bool stopped;
         private bool zanting;
         private bool pause;
         private bool tj_zt;
@@ -92,7 +92,7 @@ namespace diao
         private int progress;//Percentage?
         private int shu_; //Number, count, quantity or volume?
         private Form1.Xian xian_linshi = new Form1.Xian();
-        private int shi_jian_;// Time - Moments - Events?
+        private int time;// Time - Moments - Events?
         private bool qu_xinghao;//To get/Retrieve?
         public static object locker = new object();
         private string modelNumber = "1 6 04";
@@ -156,7 +156,7 @@ namespace diao
         private OpenFileDialog bmpFileDialog;
         private SkinPictureBox hua_ban;
         private System.Windows.Forms.Timer ding_cl;
-        private TextBox txtBoxText;
+        private TextBox txtBoxText; //Textbox when clicking the new text button
         private Panel panel6;
         private Label label17;
         private Label label16;
@@ -182,8 +182,8 @@ namespace diao
         private OpenFileDialog pi_fu;
         private CheckBox lockAspectRatioChkBox;
         private ToolStripMenuItem BMPToolStripMenuItem;
-        private SkinLabel shi_jian;
-        private System.Windows.Forms.Timer ji_shi;
+        private SkinLabel elapsedTimeLbl;
+        private System.Windows.Forms.Timer elapsedTimeTimer;
         private Label label1;
         private Label label2;
         private Label label3;
@@ -223,9 +223,8 @@ namespace diao
             return new Bitmap(bitmap3);
         }
 
-        private void hui_fu() => this.BeginInvoke((Delegate)new Form1.MyInvoke(this.hf));
-
-        private void ting_zhi_dk() => this.BeginInvoke((Delegate)new Form1.MyInvoke(this.tz));
+        private void hui_fu() => BeginInvoke(new MyInvoke(hf));
+        private void ting_zhi_dk() => BeginInvoke(new MyInvoke(tz));
 
         private void hf()
         {
@@ -298,7 +297,7 @@ namespace diao
             }
             this.txtBoxText.Visible = true;
             this.txtBoxText.Focus();
-            this.chi_cun();
+            this.resizeNewTextBox();
         }
 
         private Bitmap qu_tu()
@@ -329,37 +328,38 @@ namespace diao
             return bitmap;
         }
 
-        private void chi_cun()
+        private void resizeNewTextBox()
         {
-            if (this.txtBoxText.Text == "")
+            if (txtBoxText.Text == "")
                 return;
-            SizeF sizeF = this.txtBoxText.CreateGraphics().MeasureString(this.txtBoxText.Text, this.txtBoxText.Font);
-            this.txtBoxText.Size = new Size((int)sizeF.Width, (int)sizeF.Height);
+
+            SizeF sizeF = txtBoxText.CreateGraphics().MeasureString(txtBoxText.Text, txtBoxText.Font);
+            txtBoxText.Size = new Size((int)sizeF.Width, (int)sizeF.Height);
         }
 
         private void cl()
         {
-            this.jinru = true;
-            this.pictureScaling = this.suofang(this.tu_yuan, (int)((double)this.hua_ban.Width * ((double)this.xian_k / (double)this.change_half.Width)), (int)((double)this.hua_ban.Height * ((double)this.xian_k / (double)this.change_half.Width)));
-            this.chu_li();
-            this.ding_cl.Enabled = false;
-            this.jinru = false;
+            jinru = true;
+            pictureScaling = resizeBitmap(tu_yuan, hua_ban.Width * (xian_k / change_half.Width), hua_ban.Height * (xian_k / change_half.Width));
+            chu_li();
+            ding_cl.Enabled = false;
+            jinru = false;
         }
 
-        public Bitmap suofang(Bitmap bmp, int newW, int newH)
+        public Bitmap resizeBitmap(Bitmap bmp, int newWidth, int newHeight)
         {
             try
             {
-                Bitmap bitmap = new Bitmap(newW, newH);
-                Graphics graphics = Graphics.FromImage((System.Drawing.Image)bitmap);
+                Bitmap bitmap = new Bitmap(newWidth, newHeight);//Create an empty bitmap
+                Graphics graphics = Graphics.FromImage(bitmap);//Create a graphics object from the empty bitmap
                 graphics.InterpolationMode = InterpolationMode.Low;
-                graphics.DrawImage((System.Drawing.Image)bmp, new Rectangle(0, 0, newW, newH), new Rectangle(0, 0, bmp.Width, bmp.Height), GraphicsUnit.Pixel);
+                graphics.DrawImage(bmp, new Rectangle(0, 0, newWidth, newHeight), new Rectangle(0, 0, bmp.Width, bmp.Height), GraphicsUnit.Pixel);//Draw the old bitmap to the new object with the new size
                 graphics.Dispose();
                 return bitmap;
             }
             catch
             {
-                return (Bitmap)null;
+                return null;
             }
         }
 
@@ -819,22 +819,23 @@ namespace diao
                     tu_diaoke = dou_dong(pictureScaling, 30);
                     break;
                 case 3:
-                    this.tu_diaoke = this.blackWhite(128);
-                    Bitmap bb = new Bitmap(this.tu_diaoke.Width + 4, this.tu_diaoke.Height + 4);
-                    Graphics graphics = Graphics.FromImage((System.Drawing.Image)bb);
+                    tu_diaoke = blackWhite(128);
+                    Bitmap bb = new Bitmap(tu_diaoke.Width + 4, tu_diaoke.Height + 4);
+                    Graphics graphics = Graphics.FromImage(bb);
                     graphics.Clear(Color.White);
-                    graphics.DrawImage((System.Drawing.Image)this.tu_diaoke, new PointF(2f, 2f));
+                    graphics.DrawImage(tu_diaoke, new PointF(2f, 2f));
                     graphics.Dispose();
-                    this.tu_diaoke = this.qu_lunkuo(bb);
+                    tu_diaoke = qu_lunkuo(bb);
                     bb.Dispose();
                     break;
                 case 4:
-                    this.tu_diaoke = this.cartoonPaint_MouseDown(this.pictureScaling);
-                    this.tu_diaoke = this.dou_dong(this.tu_diaoke, 0);
+                    tu_diaoke = cartoonPaint_MouseDown(pictureScaling);
+                    tu_diaoke = dou_dong(tu_diaoke, 0);
                     break;
             }
             if (fan_se)
                 tu_diaoke = fanse(tu_diaoke);
+
             qu_bian();
             shua_xin_kg();
             hua_ban.BackgroundImage = tu_diaoke;
@@ -1675,7 +1676,7 @@ namespace diao
                             newW = (int)((double)this.tu_yuan.Width * ((double)this.xian_g / (double)this.tu_yuan.Height));
                             newH = this.xian_g;
                         }
-                        this.tu_yuan = this.suofang(this.tu_yuan, newW, newH);
+                        this.tu_yuan = this.resizeBitmap(this.tu_yuan, newW, newH);
                     }
                     this.tu_yuan = this.hui_du(this.tu_yuan);
                     this.pictureScaling = new Bitmap((System.Drawing.Image)this.tu_yuan);
@@ -1748,12 +1749,12 @@ namespace diao
 
         private void ding_cl_Tick(object sender, EventArgs e)
         {
-            if (this.jinru)
+            if (jinru)
                 return;
-            new Thread(new ThreadStart(this.cl)).Start();
+            new Thread(new ThreadStart(cl)).Start();
         }
 
-        private void text_wenzi_TextChanged(object sender, EventArgs e) => this.chi_cun();
+        private void text_wenzi_TextChanged(object sender, EventArgs e) => this.resizeNewTextBox();
 
         private void but_ziti_Click(object sender, EventArgs e)
         {
@@ -1773,9 +1774,9 @@ namespace diao
 
         private void label16_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!this.z_anxia)
+            if (!z_anxia)
                 return;
-            this.panel6.Location = new System.Drawing.Point(this.panel6.Location.X + (e.X - this.z_x), this.panel6.Location.Y + (e.Y - this.z_y));
+            panel6.Location = new System.Drawing.Point(this.panel6.Location.X + (e.X - this.z_x), this.panel6.Location.Y + (e.Y - this.z_y));
         }
 
         private void label16_MouseUp(object sender, MouseEventArgs e) => this.z_anxia = false;
@@ -2068,9 +2069,10 @@ namespace diao
                 }
                 else if (num5 < 1 || num7 < 1)
                     return;
-                this.hua_ban.Width = (int)((double)num5 * ((double)this.change_half.Width / (double)this.xian_k));
-                this.hua_ban.Height = (int)((double)num7 * ((double)this.change_half.Width / (double)this.xian_k));
-                this.ding_cl_Tick((object)null, (EventArgs)null);
+
+                hua_ban.Width = (int)((double)num5 * ((double)this.change_half.Width / (double)this.xian_k));
+                hua_ban.Height = (int)((double)num7 * ((double)this.change_half.Width / (double)this.xian_k));
+                ding_cl_Tick(null, null);
             }
             else
             {
@@ -2131,9 +2133,9 @@ namespace diao
                 }
                 else if (num5 < 1 || num7 < 1)
                     return;
-                this.hua_ban.Width = (int)((double)num5 * ((double)this.change_half.Width / (double)this.xian_k));
-                this.hua_ban.Height = (int)((double)num7 * ((double)this.change_half.Width / (double)this.xian_k));
-                this.ding_cl_Tick((object)null, (EventArgs)null);
+                hua_ban.Width = (int)((double)num5 * ((double)this.change_half.Width / (double)this.xian_k));
+                hua_ban.Height = (int)((double)num7 * ((double)this.change_half.Width / (double)this.xian_k));
+                ding_cl_Tick(null, null);
             }
             else
             {
@@ -2583,17 +2585,18 @@ namespace diao
 
         public bool ting_zhi()
         {
-            this.isRunning = false;
-            if (!this.com.IsOpen)
+            isRunning = false;
+            if (!com.IsOpen)
                 return false;
+
             try
             {
-                this.com.Write(new byte[4]
+                com.Write(new byte[4]
                 {
-          (byte) 22,
-          (byte) 0,
-          (byte) 4,
-          (byte) 0
+                    22,
+                    0,
+                    4,
+                    0
                 }, 0, 4);
             }
             catch (Exception ex)
@@ -2604,15 +2607,17 @@ namespace diao
             return true;
         }
 
-        private bool is_lianjie()
+        private bool closeComConnection()
         {
             try
             {
-                this.com.Close();
-                this.com.Open();
-                if (!this.com.IsOpen)
+                com.Close();
+                com.Open();
+
+                if (!com.IsOpen)
                     return false;
-                this.com.Close();
+
+                com.Close();
                 return true;
             }
             catch (Exception ex)
@@ -2696,7 +2701,7 @@ namespace diao
                                     if (portName2 == portName1)
                                     {
                                         flag2 = true;
-                                        while (!this.is_lianjie())
+                                        while (!this.closeComConnection())
                                             ;
                                         break;
                                     }
@@ -2714,7 +2719,7 @@ namespace diao
                             if (this.com.IsOpen)
                             {
                                 ++num3;
-                                if (this.tingzhi)
+                                if (this.stopped)
                                 {
                                     this.ting_zhi_dk();
                                     return false;
@@ -2802,7 +2807,7 @@ namespace diao
                                     if (portName2 == portName1)
                                     {
                                         flag = true;
-                                        while (!this.is_lianjie())
+                                        while (!this.closeComConnection())
                                             ;
                                         break;
                                     }
@@ -2820,7 +2825,7 @@ namespace diao
                             if (this.com.IsOpen)
                             {
                                 ++num;
-                                if (this.tingzhi)
+                                if (this.stopped)
                                 {
                                     this.ting_zhi_dk();
                                     return;
@@ -2869,7 +2874,7 @@ namespace diao
                 while (!this.returnCode)
                 {
                     ++num3;
-                    if (this.tingzhi)
+                    if (this.stopped)
                     {
                         this.ting_zhi_dk();
                         return;
@@ -2952,15 +2957,15 @@ namespace diao
                 zanting = true;
                 pause = !pause;
 
-                if (pause)
+                if (pause == true)
                 {
                     btn_start.Text = continueString;
-                    ji_shi.Enabled = false;
+                    elapsedTimeTimer.Enabled = false;
                 }
                 else
                 {
                     btn_start.Text = pauseString;
-                    ji_shi.Enabled = true;
+                    elapsedTimeTimer.Enabled = true;
                 }
             }
             else if (!this.engraverConnected)
@@ -2973,11 +2978,11 @@ namespace diao
             }
             else
             {
-                ji_shi.Enabled = true; //translates to Immediate or instant? No clue...
+                elapsedTimeTimer.Enabled = true; //timer object
                 btn_start.Text = pauseString;
-                shi_jian_ = 0;
+                time = 0;
                 isRunning = true;
-                tingzhi = false;
+                stopped = false;
                 shi_liang = this.pictureProcessingDropDownMenu.SelectedIndex == 2;
                 m_jd = 0;
                 jdt.Value = 0;
@@ -3157,7 +3162,7 @@ namespace diao
             }
             else
                 diaoke2();
-            ji_shi.Enabled = false;
+            elapsedTimeTimer.Enabled = false;
         }
 
         private void tz()
@@ -3173,9 +3178,10 @@ namespace diao
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            if (!this.isRunning)
+            if (!isRunning)
                 return;
-            this.tingzhi = true;
+
+            stopped = true;
         }
 
         private void tiao_gonglv_Scroll(object sender, EventArgs e) => this.skinLabel2.Text = this.tiao_gonglv.Value.ToString() + "%";
@@ -3184,16 +3190,16 @@ namespace diao
 
         public bool dao_yuandian()
         {
-            if (!this.com.IsOpen)
+            if (!com.IsOpen)
                 return false;
             try
             {
                 this.com.Write(new byte[4]
                 {
-          (byte) 23,
-          (byte) 0,
-          (byte) 4,
-          (byte) 0
+                    23,
+                    0,
+                    4,
+                    0
                 }, 0, 4);
             }
             catch (Exception ex)
@@ -3202,12 +3208,13 @@ namespace diao
                 return false;
             }
             int num1 = 300;
-            this.returnCode = false;
+            returnCode = false;
+
             while (0 < num1--)
             {
                 Thread.Sleep(10);
-                this.chuli_shijian();
-                if (this.returnCode)
+                chuli_shijian();
+                if (returnCode)
                     return true;
             }
             return false;
@@ -3215,16 +3222,16 @@ namespace diao
 
         public bool du_ban_ben()
         {
-            if (!this.com.IsOpen)
+            if (!com.IsOpen)
                 return false;
             try
             {
-                this.com.Write(new byte[4]
+                com.Write(new byte[4]
                 {
-          byte.MaxValue,
-          (byte) 0,
-          (byte) 4,
-          (byte) 0
+                    byte.MaxValue,
+                    0,
+                    4,
+                    0
                 }, 0, 4);
             }
             catch (Exception ex)
@@ -3446,7 +3453,7 @@ namespace diao
                         newW = (int)((double)this.tu_yuan.Width * ((double)this.xian_g / (double)this.tu_yuan.Height));
                         newH = this.xian_g;
                     }
-                    this.tu_yuan = this.suofang(this.tu_yuan, newW, newH);
+                    this.tu_yuan = this.resizeBitmap(this.tu_yuan, newW, newH);
                 }
                 this.pictureScaling = new Bitmap((System.Drawing.Image)this.tu_yuan);
                 this.hua_ban.Width = (int)((double)this.pictureScaling.Width * ((double)this.change_half.Width / (double)this.xian_k));
@@ -3507,13 +3514,13 @@ namespace diao
             jdt.Visible = false;
         }
 
-        private void ji_shi_Tick(object sender, EventArgs e)
+        private void elapsedTimeTimer_Tick(object sender, EventArgs e)
         {
-            ++shi_jian_;
-            int num1 = this.shi_jian_ / 3600;
-            int num2 = this.shi_jian_ % 3600 / 60;
-            int num3 = this.shi_jian_ % 3600 % 60;
-            this.shi_jian.Text = num1.ToString() + "," + num2.ToString() + "," + num3.ToString();
+            ++time;
+            int hours = time / 3600;
+            int minutes = time % 3600 / 60;
+            int seconds = time % 3600 % 60;
+            elapsedTimeLbl.Text = hours.ToString() + "," + minutes.ToString() + "," + seconds.ToString();
         }
 
         private void text_wenzi_DoubleClick(object sender, EventArgs e)
@@ -3648,8 +3655,8 @@ namespace diao
             this.BMPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pi_fu = new System.Windows.Forms.OpenFileDialog();
             this.lockAspectRatioChkBox = new System.Windows.Forms.CheckBox();
-            this.shi_jian = new CCWin.SkinControl.SkinLabel();
-            this.ji_shi = new System.Windows.Forms.Timer(this.components);
+            this.elapsedTimeLbl = new CCWin.SkinControl.SkinLabel();
+            this.elapsedTimeTimer = new System.Windows.Forms.Timer(this.components);
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -4457,21 +4464,21 @@ namespace diao
             this.lockAspectRatioChkBox.UseVisualStyleBackColor = false;
             this.lockAspectRatioChkBox.CheckedChanged += new System.EventHandler(this.kg_bi_suoding_CheckedChanged);
             // 
-            // shi_jian
+            // elapsedTimeLbl
             // 
-            this.shi_jian.BackColor = System.Drawing.Color.Transparent;
-            this.shi_jian.BorderColor = System.Drawing.Color.White;
-            this.shi_jian.Font = new System.Drawing.Font("Microsoft YaHei", 16F);
-            this.shi_jian.Location = new System.Drawing.Point(531, 558);
-            this.shi_jian.Name = "shi_jian";
-            this.shi_jian.Size = new System.Drawing.Size(230, 23);
-            this.shi_jian.TabIndex = 82;
-            this.shi_jian.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.elapsedTimeLbl.BackColor = System.Drawing.Color.Transparent;
+            this.elapsedTimeLbl.BorderColor = System.Drawing.Color.White;
+            this.elapsedTimeLbl.Font = new System.Drawing.Font("Microsoft YaHei", 16F);
+            this.elapsedTimeLbl.Location = new System.Drawing.Point(531, 558);
+            this.elapsedTimeLbl.Name = "elapsedTimeLbl";
+            this.elapsedTimeLbl.Size = new System.Drawing.Size(230, 23);
+            this.elapsedTimeLbl.TabIndex = 82;
+            this.elapsedTimeLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // ji_shi
+            // elapsedTimeTimer
             // 
-            this.ji_shi.Interval = 1000;
-            this.ji_shi.Tick += new System.EventHandler(this.ji_shi_Tick);
+            this.elapsedTimeTimer.Interval = 1000;
+            this.elapsedTimeTimer.Tick += new System.EventHandler(this.elapsedTimeTimer_Tick);
             // 
             // label1
             // 
@@ -4681,7 +4688,7 @@ namespace diao
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.shi_jian);
+            this.Controls.Add(this.elapsedTimeLbl);
             this.Controls.Add(this.lockAspectRatioChkBox);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.but_tuoji);
