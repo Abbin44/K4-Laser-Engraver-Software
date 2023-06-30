@@ -4,3 +4,7 @@ I'm trying to clear up the code and first and foremost tranlate it to english to
 ## Note 1
 
 After early inspection it appears that there is a huge amount of redundant code that could be cleared up by combining it to new methods. There also seems to be a decent amount of code that is never even used.
+
+## Note 2
+
+It might be worth to remove all the chinese/japanese text options to heavily reduce the amount of code?
