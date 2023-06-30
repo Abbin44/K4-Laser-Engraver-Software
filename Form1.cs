@@ -87,7 +87,7 @@ namespace diao
         private int bu = 8;
         private int k_kuan;
         private int k_gao;
-        private bool shi_liang;
+        private bool pictureProcessingMode;
         private List<PointF[]> dian_shu_zu = new List<PointF[]>();
         private int progress;//Percentage?
         private int shu_; //Number, count, quantity or volume?
@@ -125,7 +125,7 @@ namespace diao
         private string stopString = "Stop";
         private Bitmap image;
         private IContainer components;
-        private SkinPanel change_half;
+        private SkinPanel canvasSpace;
         private SkinButton btnFlip;
         private SkinButton btnRotate;
         private SkinButton but_trash;
@@ -154,7 +154,7 @@ namespace diao
         private SerialPort com;
         private SkinPanel skinPanel2;
         private OpenFileDialog bmpFileDialog;
-        private SkinPictureBox hua_ban;
+        private SkinPictureBox pictureBox; //Picture box that gets used when adding a picture
         private System.Windows.Forms.Timer ding_cl;
         private TextBox txtBoxText; //Textbox when clicking the new text button
         private Panel panel6;
@@ -184,24 +184,26 @@ namespace diao
         private ToolStripMenuItem BMPToolStripMenuItem;
         private SkinLabel elapsedTimeLbl;
         private System.Windows.Forms.Timer elapsedTimeTimer;
-        private Label label1;
-        private Label label2;
-        private Label label3;
-        private Label label4;
-        private Label label5;
-        private Label label6;
-        private Label label7;
-        private Label label8;
-        private Label label9;
-        private Label label10;
-        private Label label11;
-        private Label label12;
-        private Label label13;
-        private Label label14;
-        private Label label15;
-        private Label label18;
-        private Label label19;
-        private Label label20;
+
+        //These labels right here are the ones that mark mm on the top and right edge of the canvas
+        private Label widthLbl0;
+        private Label widthLbl10;
+        private Label widthLbl20;
+        private Label widthLbl30;
+        private Label widthLbl40;
+        private Label widthLbl50;
+        private Label widthLbl60;
+        private Label widthLbl70;
+        private Label widthLbl80;
+        private Label heightLbl0;
+        private Label heightLbl10;
+        private Label heightLbl20;
+        private Label heightLbl30;
+        private Label heightLbl40;
+        private Label heightLbl50;
+        private Label heightLbl60;
+        private Label heightLbl70;
+        private Label heightLbl80;
 
         private Bitmap cartoonPaint_MouseDown(Bitmap bb)
         {
@@ -229,8 +231,8 @@ namespace diao
         private void hf()
         {
             tu_diaoke = new Bitmap(hf_bmp);
-            hua_ban.BackgroundImage = tu_diaoke;
-            hua_ban.Refresh();
+            pictureBox.BackgroundImage = tu_diaoke;
+            pictureBox.Refresh();
         }
 
         private void shua_xin() => this.BeginInvoke((Delegate)new Form1.MyInvoke(this.sx));
@@ -254,7 +256,7 @@ namespace diao
             }
         }
 
-        private void hua_hong() => this.hua_ban.Refresh();
+        private void hua_hong() => this.pictureBox.Refresh();
 
         private void jdg() => this.jdt.Visible = false;
 
@@ -302,7 +304,7 @@ namespace diao
 
         private Bitmap qu_tu()
         {
-            Bitmap bitmap = new Bitmap((int)((double)this.txtBoxText.Width * ((double)this.xian_k / (double)this.change_half.Width)), (int)((double)this.txtBoxText.Height * ((double)this.xian_k / (double)this.change_half.Width)));
+            Bitmap bitmap = new Bitmap((int)((double)this.txtBoxText.Width * ((double)this.xian_k / (double)this.canvasSpace.Width)), (int)((double)this.txtBoxText.Height * ((double)this.xian_k / (double)this.canvasSpace.Width)));
             Graphics graphics = Graphics.FromImage((System.Drawing.Image)bitmap);
             graphics.Clear(Color.White);
             FontStyle style = FontStyle.Regular;
@@ -340,7 +342,7 @@ namespace diao
         private void cl()
         {
             jinru = true;
-            pictureScaling = resizeBitmap(tu_yuan, hua_ban.Width * (xian_k / change_half.Width), hua_ban.Height * (xian_k / change_half.Width));
+            pictureScaling = resizeBitmap(tu_yuan, pictureBox.Width * (xian_k / canvasSpace.Width), pictureBox.Height * (xian_k / canvasSpace.Width));
             chu_li();
             ding_cl.Enabled = false;
             jinru = false;
@@ -838,7 +840,7 @@ namespace diao
 
             qu_bian();
             shua_xin_kg();
-            hua_ban.BackgroundImage = tu_diaoke;
+            pictureBox.BackgroundImage = tu_diaoke;
         }
 
         //Never used?
@@ -994,7 +996,7 @@ namespace diao
             this.modelNumber = xh;
             this.settings();
             this.xinghao();
-            this.pifu();
+            this.setSkin();
             this.ini.IniWriteValue("set", "ruo", this.ruo.ToString());
             this.ini.IniWriteValue("set", "hang_yan_shi", this.hang_yan_shi.ToString());
             this.ini.IniWriteValue("set", "TIM_chong_zhuang_zhi", this.TIM_chong_zhuang_zhi.ToString());
@@ -1020,7 +1022,7 @@ namespace diao
                     this.fen_bian_lv = 0.05;
                     this.fen_bian_lv_in = 0.001968505;
                     this.Height = 662;
-                    this.change_half.Height = 564;
+                    this.canvasSpace.Height = 564;
                     this.but_tuoji.Visible = false;
                     break;
                 case "21":
@@ -1029,7 +1031,7 @@ namespace diao
                     this.fen_bian_lv = 0.05;
                     this.fen_bian_lv_in = 0.001968505;
                     this.Height = 662;
-                    this.change_half.Height = 564;
+                    this.canvasSpace.Height = 564;
                     this.but_tuoji.Visible = false;
                     break;
                 case "4":
@@ -1038,7 +1040,7 @@ namespace diao
                     this.fen_bian_lv = 0.05;
                     this.fen_bian_lv_in = 0.001968505;
                     this.Height = 598;
-                    this.change_half.Height = 500;
+                    this.canvasSpace.Height = 500;
                     this.but_tuoji.Visible = true;
                     break;
                 case "31":
@@ -1047,7 +1049,7 @@ namespace diao
                     this.fen_bian_lv = 0.05;
                     this.fen_bian_lv_in = 0.001968505;
                     this.Height = 598;
-                    this.change_half.Height = 500;
+                    this.canvasSpace.Height = 500;
                     this.but_tuoji.Visible = true;
                     break;
             }
@@ -1056,8 +1058,9 @@ namespace diao
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            change_half.MouseWheel += new MouseEventHandler(hua_ban_MouseWheel);
-            hua_ban.MouseWheel += new MouseEventHandler(hua_ban_MouseWheel);
+            canvasSpace.MouseWheel += new MouseEventHandler(hua_ban_MouseWheel);
+            pictureBox.MouseWheel += new MouseEventHandler(hua_ban_MouseWheel);
+
             FontFamily[] families = new InstalledFontCollection().Families;
 
             for (int length = families.Length; length > 0; --length)
@@ -1083,7 +1086,7 @@ namespace diao
                 modelNumber = this.ini.IniReadValue("modelNumber", "modelNumber");
                 UpdateNewLanguage();
                 xinghao();
-                pifu();
+                setSkin();
             }
             else
             {
@@ -1323,34 +1326,34 @@ namespace diao
                 return;
             if (e.Delta > 0)
             {
-                if ((double)this.hua_ban.Width / (double)this.hua_ban.Height > (double)this.xian_k / (double)this.xian_g)
+                if ((double)this.pictureBox.Width / (double)this.pictureBox.Height > (double)this.xian_k / (double)this.xian_g)
                 {
-                    if (this.hua_ban.Width + 10 > this.change_half.Width)
+                    if (this.pictureBox.Width + 10 > this.canvasSpace.Width)
                     {
-                        this.hua_ban.Width = this.change_half.Width;
-                        this.hua_ban.Height = (int)((double)this.hua_ban.Width / this.bi);
+                        this.pictureBox.Width = this.canvasSpace.Width;
+                        this.pictureBox.Height = (int)((double)this.pictureBox.Width / this.bi);
                     }
                     else
                     {
-                        this.hua_ban.Width += 10;
-                        this.hua_ban.Height = (int)((double)this.hua_ban.Width / this.bi);
+                        this.pictureBox.Width += 10;
+                        this.pictureBox.Height = (int)((double)this.pictureBox.Width / this.bi);
                     }
                 }
-                else if (this.hua_ban.Height + 10 > this.change_half.Height - 25)
+                else if (this.pictureBox.Height + 10 > this.canvasSpace.Height - 25)
                 {
-                    this.hua_ban.Height = this.change_half.Height - 25;
-                    this.hua_ban.Width = (int)((double)this.hua_ban.Height * this.bi);
+                    this.pictureBox.Height = this.canvasSpace.Height - 25;
+                    this.pictureBox.Width = (int)((double)this.pictureBox.Height * this.bi);
                 }
                 else
                 {
-                    this.hua_ban.Height += 10;
-                    this.hua_ban.Width = (int)((double)this.hua_ban.Height * this.bi);
+                    this.pictureBox.Height += 10;
+                    this.pictureBox.Width = (int)((double)this.pictureBox.Height * this.bi);
                 }
             }
-            else if (this.hua_ban.Width > 20 && this.hua_ban.Height > 20)
+            else if (this.pictureBox.Width > 20 && this.pictureBox.Height > 20)
             {
-                this.hua_ban.Width -= 10;
-                this.hua_ban.Height = (int)((double)this.hua_ban.Width / this.bi);
+                this.pictureBox.Width -= 10;
+                this.pictureBox.Height = (int)((double)this.pictureBox.Width / this.bi);
             }
             this.ding_cl.Enabled = false;
             this.ding_cl.Enabled = true;
@@ -1519,10 +1522,10 @@ namespace diao
             }
         }
 
-        private Form1.Dian qu_ling_dian()
+        private Dian qu_ling_dian()
         {
-            Form1.Dian dian1 = new Form1.Dian();
-            Form1.Dian dian2 = new Form1.Dian();
+            Dian dian1 = new Dian();
+            Dian dian2 = new Dian();
             bool flag = false;
             foreach (Form1.Xian xian in this.xian)
             {
@@ -1635,8 +1638,8 @@ namespace diao
                     this.tu_yuan = this.hui_du(this.tu_yuan);
                     this.pictureScaling = new Bitmap((System.Drawing.Image)this.tu_yuan);
                     this.bi = (double)this.pictureScaling.Width / (double)this.pictureScaling.Height;
-                    this.hua_ban.Width = (int)((double)this.pictureScaling.Width * ((double)this.change_half.Width / (double)this.xian_k));
-                    this.hua_ban.Height = (int)((double)this.pictureScaling.Height * ((double)this.change_half.Width / (double)this.xian_k));
+                    this.pictureBox.Width = (int)((double)this.pictureScaling.Width * ((double)this.canvasSpace.Width / (double)this.xian_k));
+                    this.pictureBox.Height = (int)((double)this.pictureScaling.Height * ((double)this.canvasSpace.Width / (double)this.xian_k));
                     this.chu_li();
                     this.pictureProcessingDropDownMenu.SelectedIndex = 2;
                     break;
@@ -1655,8 +1658,8 @@ namespace diao
                     this.tu_yuan = this.hui_du(this.tu_yuan);
                     this.pictureScaling = new Bitmap((System.Drawing.Image)this.tu_yuan);
                     this.bi = (double)this.pictureScaling.Width / (double)this.pictureScaling.Height;
-                    this.hua_ban.Width = (int)((double)this.pictureScaling.Width * ((double)this.change_half.Width / (double)this.xian_k));
-                    this.hua_ban.Height = (int)((double)this.pictureScaling.Height * ((double)this.change_half.Width / (double)this.xian_k));
+                    this.pictureBox.Width = (int)((double)this.pictureScaling.Width * ((double)this.canvasSpace.Width / (double)this.xian_k));
+                    this.pictureBox.Height = (int)((double)this.pictureScaling.Height * ((double)this.canvasSpace.Width / (double)this.xian_k));
                     this.chu_li();
                     this.pictureProcessingDropDownMenu.SelectedIndex = 2;
                     break;
@@ -1681,15 +1684,15 @@ namespace diao
                     this.tu_yuan = this.hui_du(this.tu_yuan);
                     this.pictureScaling = new Bitmap((System.Drawing.Image)this.tu_yuan);
                     this.bi = (double)this.pictureScaling.Width / (double)this.pictureScaling.Height;
-                    this.hua_ban.Width = (int)((double)this.pictureScaling.Width * ((double)this.change_half.Width / (double)this.xian_k));
-                    this.hua_ban.Height = (int)((double)this.pictureScaling.Height * ((double)this.change_half.Width / (double)this.xian_k));
+                    this.pictureBox.Width = (int)((double)this.pictureScaling.Width * ((double)this.canvasSpace.Width / (double)this.xian_k));
+                    this.pictureBox.Height = (int)((double)this.pictureScaling.Height * ((double)this.canvasSpace.Width / (double)this.xian_k));
                     this.chu_li();
                     this.pictureProcessingDropDownMenu.SelectedIndex = 0;
                     break;
             }
-            this.qi_dian = this.hua_ban.Location;
-            this.hua_ban.Location = new System.Drawing.Point((this.change_half.Width - this.hua_ban.Width) / 2, (this.change_half.Height - this.hua_ban.Height) / 2);
-            this.yidong((int)((double)(this.hua_ban.Location.X - this.qi_dian.X) * ((double)this.xian_k / (double)this.change_half.Width)), (int)((double)(this.hua_ban.Location.Y - this.qi_dian.Y) * ((double)this.xian_k / (double)this.change_half.Width)));
+            this.qi_dian = this.pictureBox.Location;
+            this.pictureBox.Location = new System.Drawing.Point((this.canvasSpace.Width - this.pictureBox.Width) / 2, (this.canvasSpace.Height - this.pictureBox.Height) / 2);
+            this.yidong((int)((double)(this.pictureBox.Location.X - this.qi_dian.X) * ((double)this.xian_k / (double)this.canvasSpace.Width)), (int)((double)(this.pictureBox.Location.Y - this.qi_dian.Y) * ((double)this.xian_k / (double)this.canvasSpace.Width)));
             this.openImage = true;
         }
 
@@ -1725,7 +1728,7 @@ namespace diao
                 this.qu_xinghao = true;
                 this.du_ban_ben();
                 this.dao_yuandian();
-                this.hua_ban.Location = new System.Drawing.Point(0, 0);
+                this.pictureBox.Location = new System.Drawing.Point(0, 0);
                 this.xinghao();
             }
             else
@@ -1743,9 +1746,9 @@ namespace diao
             return stringBuilder.ToString();
         }
 
-        private void huan_ban_Click(object sender, EventArgs e) => this.change_half.Focus();
+        private void huan_ban_Click(object sender, EventArgs e) => this.canvasSpace.Focus();
 
-        private void hua_ban_Click(object sender, EventArgs e) => this.hua_ban.Focus();
+        private void hua_ban_Click(object sender, EventArgs e) => this.pictureBox.Focus();
 
         private void ding_cl_Tick(object sender, EventArgs e)
         {
@@ -1760,7 +1763,7 @@ namespace diao
         {
             if (this.isRunning || this.txtBoxText.Visible)
                 return;
-            this.txtBoxText.Location = new System.Drawing.Point(this.hua_ban.Location.X, this.hua_ban.Location.Y);
+            this.txtBoxText.Location = new System.Drawing.Point(this.pictureBox.Location.X, this.pictureBox.Location.Y);
             this.txtBoxText.Visible = true;
             this.txtBoxText.Focus();
         }
@@ -1805,24 +1808,24 @@ namespace diao
                 return;
             this.an_xia = true;
             this.yi_dian = new System.Drawing.Point(e.X, e.Y);
-            this.qi_dian = this.hua_ban.Location;
+            this.qi_dian = this.pictureBox.Location;
         }
 
         private void hua_ban_MouseMove(object sender, MouseEventArgs e)
         {
             if (!this.an_xia)
                 return;
-            int x = this.hua_ban.Location.X + (e.X - this.yi_dian.X);
-            int y = this.hua_ban.Location.Y + (e.Y - this.yi_dian.Y);
+            int x = this.pictureBox.Location.X + (e.X - this.yi_dian.X);
+            int y = this.pictureBox.Location.Y + (e.Y - this.yi_dian.Y);
             if (x < 0)
                 x = 0;
-            if (x > this.change_half.Width - this.hua_ban.Width)
-                x = this.change_half.Width - this.hua_ban.Width;
+            if (x > this.canvasSpace.Width - this.pictureBox.Width)
+                x = this.canvasSpace.Width - this.pictureBox.Width;
             if (y < 0)
                 y = 0;
-            if (y > this.change_half.Height - this.hua_ban.Height)
-                y = this.change_half.Height - this.hua_ban.Height;
-            this.hua_ban.Location = new System.Drawing.Point(x, y);
+            if (y > this.canvasSpace.Height - this.pictureBox.Height)
+                y = this.canvasSpace.Height - this.pictureBox.Height;
+            this.pictureBox.Location = new System.Drawing.Point(x, y);
         }
 
         public bool yidong(int xx, int yy)
@@ -1864,7 +1867,7 @@ namespace diao
             if (!this.an_xia)
                 return;
             this.an_xia = false;
-            this.yidong((int)((double)(this.hua_ban.Location.X - this.qi_dian.X) * ((double)this.xian_k / (double)this.change_half.Width)), (int)((double)(this.hua_ban.Location.Y - this.qi_dian.Y) * ((double)this.xian_k / (double)this.change_half.Width)));
+            this.yidong((int)((double)(this.pictureBox.Location.X - this.qi_dian.X) * ((double)this.xian_k / (double)this.canvasSpace.Width)), (int)((double)(this.pictureBox.Location.Y - this.qi_dian.Y) * ((double)this.xian_k / (double)this.canvasSpace.Width)));
         }
 
 
@@ -1883,17 +1886,17 @@ namespace diao
             int x = txtBoxText.Location.X + (e.X - yi_dian.X);
             int y = txtBoxText.Location.Y + (e.Y - yi_dian.Y);
 
-            if (x < hua_ban.Location.X)
-                x = hua_ban.Location.X;
+            if (x < pictureBox.Location.X)
+                x = pictureBox.Location.X;
 
-            if (x > hua_ban.Location.X + hua_ban.Width - txtBoxText.Width)
-                x = hua_ban.Location.X + hua_ban.Width - txtBoxText.Width;
+            if (x > pictureBox.Location.X + pictureBox.Width - txtBoxText.Width)
+                x = pictureBox.Location.X + pictureBox.Width - txtBoxText.Width;
 
-            if (y < hua_ban.Location.Y)
-                y = hua_ban.Location.Y;
+            if (y < pictureBox.Location.Y)
+                y = pictureBox.Location.Y;
 
-            if (y > hua_ban.Location.Y + hua_ban.Height - txtBoxText.Height)
-                y = hua_ban.Location.Y + hua_ban.Height - txtBoxText.Height;
+            if (y > pictureBox.Location.Y + pictureBox.Height - txtBoxText.Height)
+                y = pictureBox.Location.Y + pictureBox.Height - txtBoxText.Height;
 
             txtBoxText.Location = new System.Drawing.Point(x, y);
         }
@@ -1996,7 +1999,7 @@ namespace diao
                 else
                     guan_kuang();
 
-                hua_ban.Refresh();
+                pictureBox.Refresh();
             }
         }
 
@@ -2004,7 +2007,7 @@ namespace diao
         {
             if (this.showingPreview)
             {
-                double num = (double)this.change_half.Width / (double)this.xian_k;
+                double num = (double)this.canvasSpace.Width / (double)this.xian_k;
                 int x = (int)((double)this.zuo * num);
                 int y = (int)((double)this.shang * num);
                 int width = (int)((double)this.you * num - (double)this.zuo * num);
@@ -2013,8 +2016,8 @@ namespace diao
             }
             if (!this.isRunning)
                 return;
-            int num1 = (int)((double)(int)((double)this.tu_diaoke.Height * ((double)this.m_jd / 100.0)) * ((double)this.change_half.Width / (double)this.xian_k));
-            e.Graphics.DrawLine(Pens.Red, 0, num1, this.hua_ban.Width, num1);
+            int num1 = (int)((double)(int)((double)this.tu_diaoke.Height * ((double)this.m_jd / 100.0)) * ((double)this.canvasSpace.Width / (double)this.xian_k));
+            e.Graphics.DrawLine(Pens.Red, 0, num1, this.pictureBox.Width, num1);
         }
 
         private void text_kuan_KeyPress(object sender, KeyPressEventArgs e)
@@ -2070,8 +2073,8 @@ namespace diao
                 else if (num5 < 1 || num7 < 1)
                     return;
 
-                hua_ban.Width = (int)((double)num5 * ((double)this.change_half.Width / (double)this.xian_k));
-                hua_ban.Height = (int)((double)num7 * ((double)this.change_half.Width / (double)this.xian_k));
+                pictureBox.Width = (int)((double)num5 * ((double)this.canvasSpace.Width / (double)this.xian_k));
+                pictureBox.Height = (int)((double)num7 * ((double)this.canvasSpace.Width / (double)this.xian_k));
                 ding_cl_Tick(null, null);
             }
             else
@@ -2133,8 +2136,8 @@ namespace diao
                 }
                 else if (num5 < 1 || num7 < 1)
                     return;
-                hua_ban.Width = (int)((double)num5 * ((double)this.change_half.Width / (double)this.xian_k));
-                hua_ban.Height = (int)((double)num7 * ((double)this.change_half.Width / (double)this.xian_k));
+                pictureBox.Width = (int)((double)num5 * ((double)this.canvasSpace.Width / (double)this.xian_k));
+                pictureBox.Height = (int)((double)num7 * ((double)this.canvasSpace.Width / (double)this.xian_k));
                 ding_cl_Tick(null, null);
             }
             else
@@ -2183,8 +2186,8 @@ namespace diao
             this.tu_yuan.RotateFlip(RotateFlipType.Rotate90FlipNone);
             this.pictureScaling = new Bitmap((System.Drawing.Image)this.tu_yuan);
             this.bi = (double)this.pictureScaling.Width / (double)this.pictureScaling.Height;
-            this.hua_ban.Width = (int)((double)this.pictureScaling.Width * ((double)this.change_half.Width / (double)this.xian_k));
-            this.hua_ban.Height = (int)((double)this.pictureScaling.Height * ((double)this.change_half.Width / (double)this.xian_k));
+            this.pictureBox.Width = (int)((double)this.pictureScaling.Width * ((double)this.canvasSpace.Width / (double)this.xian_k));
+            this.pictureBox.Height = (int)((double)this.pictureScaling.Height * ((double)this.canvasSpace.Width / (double)this.xian_k));
             this.ding_cl_Tick((object)null, (EventArgs)null);
         }
 
@@ -2205,9 +2208,9 @@ namespace diao
             this.tu_diaoke = new Bitmap(1, 1);
             this.openImage = false;
             this.openText = false;
-            this.hua_ban.Width = 20;
-            this.hua_ban.Height = 20;
-            this.hua_ban.BackgroundImage = (System.Drawing.Image)new Bitmap(20, 20);
+            this.pictureBox.Width = 20;
+            this.pictureBox.Height = 20;
+            this.pictureBox.BackgroundImage = (System.Drawing.Image)new Bitmap(20, 20);
         }
 
         private void but_baocun_Click(object sender, EventArgs e)
@@ -2283,7 +2286,7 @@ namespace diao
         private void tuo_ji()
         {
             this.fs_wc = false;
-            this.kai_shi_tuo_ji((int)(byte)((double)((this.hua_ban.Location.X + this.zuo) * this.xian_k) / (double)this.change_half.Width), (int)(byte)((double)((this.hua_ban.Location.Y + this.shang) * this.xian_k) / (double)this.change_half.Width), this.tu_diaoke.Width, this.tu_diaoke.Height, this.tiao_gonglv.Value * 10, this.tiao_shendu.Value);
+            this.kai_shi_tuo_ji((int)(byte)((double)((this.pictureBox.Location.X + this.zuo) * this.xian_k) / (double)this.canvasSpace.Width), (int)(byte)((double)((this.pictureBox.Location.Y + this.shang) * this.xian_k) / (double)this.canvasSpace.Width), this.tu_diaoke.Width, this.tu_diaoke.Height, this.tiao_gonglv.Value * 10, this.tiao_shendu.Value);
             this.m_jd = 0;
             int width = this.tu_diaoke.Width;
             int height = this.tu_diaoke.Height;
@@ -2377,9 +2380,9 @@ namespace diao
                     this.m_jd = (int)((double)y / (double)height * 100.0);
                 this.jin_du_();
             }
-            this.jin_du_guan();
-            this.ji_huo();
-            this.tj_zt = false;
+            jin_du_guan();
+            ji_huo();
+            tj_zt = false;
         }
 
         public bool ji_huo()
@@ -2421,16 +2424,17 @@ namespace diao
 
         private void but_tuoji_Click(object sender, EventArgs e)
         {
-            if (!this.engraverConnected)
+            if (!engraverConnected)
             {
-                int num = (int)MessageBox.Show(this.str22);
+                int num = (int)MessageBox.Show(str22);
             }
             else
             {
-                if (!this.openImage && !this.openText || !this.engraverConnected || this.tj_zt || this.isRunning)
+                if (!openImage && !openText || !engraverConnected || tj_zt || isRunning)
                     return;
-                this.tj_zt = true;
-                new Thread(new ThreadStart(this.tuo_ji)).Start();
+
+                tj_zt = true;
+                new Thread(new ThreadStart(tuo_ji)).Start();
             }
         }
 
@@ -2631,7 +2635,7 @@ namespace diao
             Bitmap bitmap = new Bitmap((System.Drawing.Image)this.tu_diaoke);
             this.hf_bmp = bitmap;
             this.fu_wei();
-            this.kai_shi((int)((double)this.hua_ban.Location.X * ((double)this.xian_k / (double)this.change_half.Width)), (int)((double)this.hua_ban.Location.Y * ((double)this.xian_k / (double)this.change_half.Width)));
+            this.kai_shi((int)((double)this.pictureBox.Location.X * ((double)this.xian_k / (double)this.canvasSpace.Width)), (int)((double)this.pictureBox.Location.Y * ((double)this.xian_k / (double)this.canvasSpace.Width)));
             byte[] buffer = bitmap.Width % 8 <= 0 ? new byte[bitmap.Width / 8 + 9] : new byte[bitmap.Width / 8 + 10];
             byte[] numArray = new byte[8]
             {
@@ -2757,7 +2761,7 @@ namespace diao
             Bitmap bitmap = new Bitmap((System.Drawing.Image)this.tu_diaoke);
             List<byte> byteList = new List<byte>();
             this.fu_wei();
-            this.kai_shi((int)((double)this.hua_ban.Location.X * ((double)this.xian_k / (double)this.change_half.Width)), (int)((double)this.hua_ban.Location.Y * ((double)this.xian_k / (double)this.change_half.Width)));
+            this.kai_shi((int)((double)this.pictureBox.Location.X * ((double)this.xian_k / (double)this.canvasSpace.Width)), (int)((double)this.pictureBox.Location.Y * ((double)this.xian_k / (double)this.canvasSpace.Width)));
             for (int index = 0; index < this.xian.Count; ++index)
             {
                 byteList.Add((byte)(this.xian[index].q.x >> 8));
@@ -2952,7 +2956,7 @@ namespace diao
         //"kaishi" - Start/Initialize
         private void but_kaishi_Click(object sender, EventArgs e)
         {
-            if (isRunning)
+            if (isRunning) //If it's running the button will whow pause instead, so this is a pause thing i guess
             {
                 zanting = true;
                 pause = !pause;
@@ -2968,22 +2972,22 @@ namespace diao
                     elapsedTimeTimer.Enabled = true;
                 }
             }
-            else if (!this.engraverConnected)
+            else if (!engraverConnected)
             {
                 int num1 = (int)MessageBox.Show(str22);
             }
-            else if (this.showingPreview)
+            else if (showingPreview)
             {
                 int num2 = (int)MessageBox.Show(stopPreviewString);
             }
-            else
+            else //If it's not running, device is connected and it's not previewing
             {
                 elapsedTimeTimer.Enabled = true; //timer object
                 btn_start.Text = pauseString;
                 time = 0;
                 isRunning = true;
                 stopped = false;
-                shi_liang = this.pictureProcessingDropDownMenu.SelectedIndex == 2;
+                pictureProcessingMode = this.pictureProcessingDropDownMenu.SelectedIndex == 2;
                 m_jd = 0;
                 jdt.Value = 0;
                 new Thread(new ThreadStart(this.dk)).Start();
@@ -3154,7 +3158,7 @@ namespace diao
 
         private void dk()
         {
-            if (shi_liang)
+            if (pictureProcessingMode)
             {
                 hf_bmp = new Bitmap(tu_diaoke);
                 qu_lujing();
@@ -3259,9 +3263,9 @@ namespace diao
             }
             else
             {
-                if (this.isRunning || !this.engraverConnected || tj_zt)
+                if (isRunning || !engraverConnected || tj_zt) //If running, not connected
                     return;
-                this.hua_ban.Location = new System.Drawing.Point();
+                this.pictureBox.Location = new System.Drawing.Point();
                 this.dao_yuandian();
             }
         }
@@ -3300,34 +3304,34 @@ namespace diao
                 case 37:
                     this.an_xia = true;
                     this.yi_dian = new System.Drawing.Point(0, 0);
-                    this.qi_dian = this.hua_ban.Location;
+                    this.qi_dian = this.pictureBox.Location;
                     this.hua_ban_MouseMove((object)null, new MouseEventArgs(MouseButtons.Left, 0, -this.bushu, 0, 0));
                     this.hua_ban_MouseUp((object)null, (MouseEventArgs)null);
-                    this.hua_ban.Focus();
+                    this.pictureBox.Focus();
                     break;
                 case 38:
                     this.an_xia = true;
                     this.yi_dian = new System.Drawing.Point(0, 0);
-                    this.qi_dian = this.hua_ban.Location;
+                    this.qi_dian = this.pictureBox.Location;
                     this.hua_ban_MouseMove((object)null, new MouseEventArgs(MouseButtons.Left, 0, 0, -this.bushu, 0));
                     this.hua_ban_MouseUp((object)null, (MouseEventArgs)null);
-                    this.hua_ban.Focus();
+                    this.pictureBox.Focus();
                     break;
                 case 39:
                     this.an_xia = true;
                     this.yi_dian = new System.Drawing.Point(0, 0);
-                    this.qi_dian = this.hua_ban.Location;
+                    this.qi_dian = this.pictureBox.Location;
                     this.hua_ban_MouseMove((object)null, new MouseEventArgs(MouseButtons.Left, 0, this.bushu, 0, 0));
                     this.hua_ban_MouseUp((object)null, (MouseEventArgs)null);
-                    this.hua_ban.Focus();
+                    this.pictureBox.Focus();
                     break;
                 case 40:
                     this.an_xia = true;
                     this.yi_dian = new System.Drawing.Point(0, 0);
-                    this.qi_dian = this.hua_ban.Location;
+                    this.qi_dian = this.pictureBox.Location;
                     this.hua_ban_MouseMove((object)null, new MouseEventArgs(MouseButtons.Left, 0, 0, this.bushu, 0));
                     this.hua_ban_MouseUp((object)null, (MouseEventArgs)null);
-                    this.hua_ban.Focus();
+                    this.pictureBox.Focus();
                     break;
             }
         }
@@ -3339,7 +3343,7 @@ namespace diao
             for (int index = 0; index < 10; ++index)
             {
                 Thread.Sleep(2);
-                this.change_half.Refresh();
+                this.canvasSpace.Refresh();
             }
             this.move(e.KeyValue);
         }
@@ -3380,16 +3384,17 @@ namespace diao
             set.m_formA.zhi(this.ruo, this.hang_yan_shi, this.TIM_chong_zhuang_zhi, this.BU, this.x_buchang, this.y_buchang, this.SS, this.MM1, this.KUAI, this.kuang_sd, this.modelNumber);
         }
 
-        private void pifu()
+        private void setSkin()
         {
-            if (!this.ini.ExistINIFile())
+            if (!ini.ExistINIFile())
                 return; //If .ini file does not exist
 
-            string str = ini.IniReadValue("pi_fu", "pi_fu");
-            if (!File.Exists(str))
+            string skinFilePath = ini.IniReadValue("pi_fu", "pi_fu");
+            if (!File.Exists(skinFilePath))
                 return;
+
             Bitmap bitmap1 = new Bitmap(Width, Height);
-            Bitmap bitmap2 = new Bitmap(str);
+            Bitmap bitmap2 = new Bitmap(skinFilePath);
             Graphics graphics = Graphics.FromImage(bitmap1);
             graphics.DrawImage(bitmap2, 0, 0, Width, Height);
             graphics.Dispose();
@@ -3401,7 +3406,7 @@ namespace diao
             if (this.pi_fu.ShowDialog() != DialogResult.OK)
                 return;
             this.ini.IniWriteValue("pi_fu", "pi_fu", this.pi_fu.FileName);
-            this.pifu();
+            this.setSkin();
         }
 
         private void Form1_DragOver(object sender, DragEventArgs e)
@@ -3421,8 +3426,8 @@ namespace diao
             if (this.openImage)
             {
                 Bitmap bitmap = this.qu_tu();
-                int num1 = (int)((double)(this.txtBoxText.Location.X - this.hua_ban.Location.X) * (double)this.xian_k / (double)this.change_half.Width);
-                int num2 = (int)((double)(this.txtBoxText.Location.Y - this.hua_ban.Location.Y) * (double)this.xian_k / (double)this.change_half.Width);
+                int num1 = (int)((double)(this.txtBoxText.Location.X - this.pictureBox.Location.X) * (double)this.xian_k / (double)this.canvasSpace.Width);
+                int num2 = (int)((double)(this.txtBoxText.Location.Y - this.pictureBox.Location.Y) * (double)this.xian_k / (double)this.canvasSpace.Width);
                 for (int x = 0; x < bitmap.Width; ++x)
                 {
                     for (int y = 0; y < bitmap.Height; ++y)
@@ -3432,8 +3437,8 @@ namespace diao
                     }
                 }
                 this.qu_bian();
-                this.hua_ban.BackgroundImage = (System.Drawing.Image)this.tu_diaoke;
-                this.hua_ban.Refresh();
+                this.pictureBox.BackgroundImage = (System.Drawing.Image)this.tu_diaoke;
+                this.pictureBox.Refresh();
             }
             else
             {
@@ -3456,9 +3461,9 @@ namespace diao
                     this.tu_yuan = this.resizeBitmap(this.tu_yuan, newW, newH);
                 }
                 this.pictureScaling = new Bitmap((System.Drawing.Image)this.tu_yuan);
-                this.hua_ban.Width = (int)((double)this.pictureScaling.Width * ((double)this.change_half.Width / (double)this.xian_k));
-                this.hua_ban.Height = (int)((double)this.pictureScaling.Height * ((double)this.change_half.Width / (double)this.xian_k));
-                this.bi = (double)this.hua_ban.Width / (double)this.hua_ban.Height;
+                this.pictureBox.Width = (int)((double)this.pictureScaling.Width * ((double)this.canvasSpace.Width / (double)this.xian_k));
+                this.pictureBox.Height = (int)((double)this.pictureScaling.Height * ((double)this.canvasSpace.Width / (double)this.xian_k));
+                this.bi = (double)this.pictureBox.Width / (double)this.pictureBox.Height;
                 this.chu_li();
             }
         }
@@ -3598,10 +3603,10 @@ namespace diao
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.change_half = new CCWin.SkinControl.SkinPanel();
+            this.canvasSpace = new CCWin.SkinControl.SkinPanel();
             this.jdt = new CCWin.SkinControl.SkinProgressBar();
             this.txtBoxText = new System.Windows.Forms.TextBox();
-            this.hua_ban = new CCWin.SkinControl.SkinPictureBox();
+            this.pictureBox = new CCWin.SkinControl.SkinPictureBox();
             this.panel6 = new System.Windows.Forms.Panel();
             this.skinLabel6 = new CCWin.SkinControl.SkinLabel();
             this.label17 = new System.Windows.Forms.Label();
@@ -3657,26 +3662,26 @@ namespace diao
             this.lockAspectRatioChkBox = new System.Windows.Forms.CheckBox();
             this.elapsedTimeLbl = new CCWin.SkinControl.SkinLabel();
             this.elapsedTimeTimer = new System.Windows.Forms.Timer(this.components);
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.change_half.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.hua_ban)).BeginInit();
+            this.widthLbl0 = new System.Windows.Forms.Label();
+            this.widthLbl10 = new System.Windows.Forms.Label();
+            this.widthLbl20 = new System.Windows.Forms.Label();
+            this.widthLbl30 = new System.Windows.Forms.Label();
+            this.widthLbl40 = new System.Windows.Forms.Label();
+            this.widthLbl50 = new System.Windows.Forms.Label();
+            this.widthLbl60 = new System.Windows.Forms.Label();
+            this.widthLbl70 = new System.Windows.Forms.Label();
+            this.widthLbl80 = new System.Windows.Forms.Label();
+            this.heightLbl0 = new System.Windows.Forms.Label();
+            this.heightLbl10 = new System.Windows.Forms.Label();
+            this.heightLbl20 = new System.Windows.Forms.Label();
+            this.heightLbl30 = new System.Windows.Forms.Label();
+            this.heightLbl40 = new System.Windows.Forms.Label();
+            this.heightLbl50 = new System.Windows.Forms.Label();
+            this.heightLbl60 = new System.Windows.Forms.Label();
+            this.heightLbl70 = new System.Windows.Forms.Label();
+            this.heightLbl80 = new System.Windows.Forms.Label();
+            this.canvasSpace.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.panel6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tiao_gonglv)).BeginInit();
@@ -3685,24 +3690,24 @@ namespace diao
             this.menu.SuspendLayout();
             this.SuspendLayout();
             // 
-            // change_half
+            // canvasSpace
             // 
-            this.change_half.BackColor = System.Drawing.Color.Transparent;
-            this.change_half.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.change_half.Controls.Add(this.jdt);
-            this.change_half.Controls.Add(this.txtBoxText);
-            this.change_half.Controls.Add(this.hua_ban);
-            this.change_half.ControlState = CCWin.SkinClass.ControlState.Normal;
-            this.change_half.DownBack = null;
-            this.change_half.Location = new System.Drawing.Point(7, 88);
-            this.change_half.MouseBack = null;
-            this.change_half.Name = "change_half";
-            this.change_half.NormlBack = null;
-            this.change_half.Size = new System.Drawing.Size(500, 500);
-            this.change_half.TabIndex = 0;
-            this.change_half.Click += new System.EventHandler(this.huan_ban_Click);
-            this.change_half.Paint += new System.Windows.Forms.PaintEventHandler(this.huan_ban_Paint);
-            this.change_half.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.huan_ban_PreviewKeyDown);
+            this.canvasSpace.BackColor = System.Drawing.Color.Transparent;
+            this.canvasSpace.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.canvasSpace.Controls.Add(this.jdt);
+            this.canvasSpace.Controls.Add(this.txtBoxText);
+            this.canvasSpace.Controls.Add(this.pictureBox);
+            this.canvasSpace.ControlState = CCWin.SkinClass.ControlState.Normal;
+            this.canvasSpace.DownBack = null;
+            this.canvasSpace.Location = new System.Drawing.Point(7, 88);
+            this.canvasSpace.MouseBack = null;
+            this.canvasSpace.Name = "canvasSpace";
+            this.canvasSpace.NormlBack = null;
+            this.canvasSpace.Size = new System.Drawing.Size(500, 500);
+            this.canvasSpace.TabIndex = 0;
+            this.canvasSpace.Click += new System.EventHandler(this.huan_ban_Click);
+            this.canvasSpace.Paint += new System.Windows.Forms.PaintEventHandler(this.huan_ban_Paint);
+            this.canvasSpace.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.huan_ban_PreviewKeyDown);
             // 
             // jdt
             // 
@@ -3738,21 +3743,21 @@ namespace diao
             this.txtBoxText.MouseMove += new System.Windows.Forms.MouseEventHandler(this.text_wenzi_MouseMove);
             this.txtBoxText.MouseUp += new System.Windows.Forms.MouseEventHandler(this.text_wenzi_MouseUp);
             // 
-            // hua_ban
+            // pictureBox
             // 
-            this.hua_ban.BackColor = System.Drawing.Color.White;
-            this.hua_ban.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.hua_ban.Location = new System.Drawing.Point(0, 0);
-            this.hua_ban.Name = "hua_ban";
-            this.hua_ban.Size = new System.Drawing.Size(20, 20);
-            this.hua_ban.TabIndex = 1;
-            this.hua_ban.TabStop = false;
-            this.hua_ban.Click += new System.EventHandler(this.hua_ban_Click);
-            this.hua_ban.Paint += new System.Windows.Forms.PaintEventHandler(this.hua_ban_Paint);
-            this.hua_ban.MouseDown += new System.Windows.Forms.MouseEventHandler(this.hua_ban_MouseDown);
-            this.hua_ban.MouseMove += new System.Windows.Forms.MouseEventHandler(this.hua_ban_MouseMove);
-            this.hua_ban.MouseUp += new System.Windows.Forms.MouseEventHandler(this.hua_ban_MouseUp);
-            this.hua_ban.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.hua_ban_PreviewKeyDown);
+            this.pictureBox.BackColor = System.Drawing.Color.White;
+            this.pictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox.Name = "pictureBox";
+            this.pictureBox.Size = new System.Drawing.Size(20, 20);
+            this.pictureBox.TabIndex = 1;
+            this.pictureBox.TabStop = false;
+            this.pictureBox.Click += new System.EventHandler(this.hua_ban_Click);
+            this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.hua_ban_Paint);
+            this.pictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.hua_ban_MouseDown);
+            this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.hua_ban_MouseMove);
+            this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.hua_ban_MouseUp);
+            this.pictureBox.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.hua_ban_PreviewKeyDown);
             // 
             // panel6
             // 
@@ -4480,185 +4485,185 @@ namespace diao
             this.elapsedTimeTimer.Interval = 1000;
             this.elapsedTimeTimer.Tick += new System.EventHandler(this.elapsedTimeTimer_Tick);
             // 
-            // label1
+            // widthLbl0
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label1.Location = new System.Drawing.Point(4, 75);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(11, 11);
-            this.label1.TabIndex = 83;
-            this.label1.Text = "0";
+            this.widthLbl0.AutoSize = true;
+            this.widthLbl0.Font = new System.Drawing.Font("SimSun", 8F);
+            this.widthLbl0.Location = new System.Drawing.Point(4, 75);
+            this.widthLbl0.Name = "widthLbl0";
+            this.widthLbl0.Size = new System.Drawing.Size(11, 11);
+            this.widthLbl0.TabIndex = 83;
+            this.widthLbl0.Text = "0";
             // 
-            // label2
+            // widthLbl10
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label2.Location = new System.Drawing.Point(66, 75);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(17, 11);
-            this.label2.TabIndex = 84;
-            this.label2.Text = "10";
+            this.widthLbl10.AutoSize = true;
+            this.widthLbl10.Font = new System.Drawing.Font("SimSun", 8F);
+            this.widthLbl10.Location = new System.Drawing.Point(66, 75);
+            this.widthLbl10.Name = "widthLbl10";
+            this.widthLbl10.Size = new System.Drawing.Size(17, 11);
+            this.widthLbl10.TabIndex = 84;
+            this.widthLbl10.Text = "10";
             // 
-            // label3
+            // widthLbl20
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label3.Location = new System.Drawing.Point(128, 75);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(17, 11);
-            this.label3.TabIndex = 85;
-            this.label3.Text = "20";
+            this.widthLbl20.AutoSize = true;
+            this.widthLbl20.Font = new System.Drawing.Font("SimSun", 8F);
+            this.widthLbl20.Location = new System.Drawing.Point(128, 75);
+            this.widthLbl20.Name = "widthLbl20";
+            this.widthLbl20.Size = new System.Drawing.Size(17, 11);
+            this.widthLbl20.TabIndex = 85;
+            this.widthLbl20.Text = "20";
             // 
-            // label4
+            // widthLbl30
             // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label4.Location = new System.Drawing.Point(190, 75);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(17, 11);
-            this.label4.TabIndex = 86;
-            this.label4.Text = "30";
+            this.widthLbl30.AutoSize = true;
+            this.widthLbl30.Font = new System.Drawing.Font("SimSun", 8F);
+            this.widthLbl30.Location = new System.Drawing.Point(190, 75);
+            this.widthLbl30.Name = "widthLbl30";
+            this.widthLbl30.Size = new System.Drawing.Size(17, 11);
+            this.widthLbl30.TabIndex = 86;
+            this.widthLbl30.Text = "30";
             // 
-            // label5
+            // widthLbl40
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label5.Location = new System.Drawing.Point(252, 75);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(17, 11);
-            this.label5.TabIndex = 87;
-            this.label5.Text = "40";
+            this.widthLbl40.AutoSize = true;
+            this.widthLbl40.Font = new System.Drawing.Font("SimSun", 8F);
+            this.widthLbl40.Location = new System.Drawing.Point(252, 75);
+            this.widthLbl40.Name = "widthLbl40";
+            this.widthLbl40.Size = new System.Drawing.Size(17, 11);
+            this.widthLbl40.TabIndex = 87;
+            this.widthLbl40.Text = "40";
             // 
-            // label6
+            // widthLbl50
             // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label6.Location = new System.Drawing.Point(314, 75);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(17, 11);
-            this.label6.TabIndex = 88;
-            this.label6.Text = "50";
+            this.widthLbl50.AutoSize = true;
+            this.widthLbl50.Font = new System.Drawing.Font("SimSun", 8F);
+            this.widthLbl50.Location = new System.Drawing.Point(314, 75);
+            this.widthLbl50.Name = "widthLbl50";
+            this.widthLbl50.Size = new System.Drawing.Size(17, 11);
+            this.widthLbl50.TabIndex = 88;
+            this.widthLbl50.Text = "50";
             // 
-            // label7
+            // widthLbl60
             // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label7.Location = new System.Drawing.Point(376, 75);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(17, 11);
-            this.label7.TabIndex = 89;
-            this.label7.Text = "60";
+            this.widthLbl60.AutoSize = true;
+            this.widthLbl60.Font = new System.Drawing.Font("SimSun", 8F);
+            this.widthLbl60.Location = new System.Drawing.Point(376, 75);
+            this.widthLbl60.Name = "widthLbl60";
+            this.widthLbl60.Size = new System.Drawing.Size(17, 11);
+            this.widthLbl60.TabIndex = 89;
+            this.widthLbl60.Text = "60";
             // 
-            // label8
+            // widthLbl70
             // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label8.Location = new System.Drawing.Point(438, 75);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(17, 11);
-            this.label8.TabIndex = 90;
-            this.label8.Text = "70";
+            this.widthLbl70.AutoSize = true;
+            this.widthLbl70.Font = new System.Drawing.Font("SimSun", 8F);
+            this.widthLbl70.Location = new System.Drawing.Point(438, 75);
+            this.widthLbl70.Name = "widthLbl70";
+            this.widthLbl70.Size = new System.Drawing.Size(17, 11);
+            this.widthLbl70.TabIndex = 90;
+            this.widthLbl70.Text = "70";
             // 
-            // label9
+            // widthLbl80
             // 
-            this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label9.Location = new System.Drawing.Point(500, 75);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(17, 11);
-            this.label9.TabIndex = 91;
-            this.label9.Text = "80";
+            this.widthLbl80.AutoSize = true;
+            this.widthLbl80.Font = new System.Drawing.Font("SimSun", 8F);
+            this.widthLbl80.Location = new System.Drawing.Point(500, 75);
+            this.widthLbl80.Name = "widthLbl80";
+            this.widthLbl80.Size = new System.Drawing.Size(17, 11);
+            this.widthLbl80.TabIndex = 91;
+            this.widthLbl80.Text = "80";
             // 
-            // label10
+            // heightLbl0
             // 
-            this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label10.Location = new System.Drawing.Point(511, 84);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(11, 11);
-            this.label10.TabIndex = 92;
-            this.label10.Text = "0";
+            this.heightLbl0.AutoSize = true;
+            this.heightLbl0.Font = new System.Drawing.Font("SimSun", 8F);
+            this.heightLbl0.Location = new System.Drawing.Point(511, 84);
+            this.heightLbl0.Name = "heightLbl0";
+            this.heightLbl0.Size = new System.Drawing.Size(11, 11);
+            this.heightLbl0.TabIndex = 92;
+            this.heightLbl0.Text = "0";
             // 
-            // label11
+            // heightLbl10
             // 
-            this.label11.AutoSize = true;
-            this.label11.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label11.Location = new System.Drawing.Point(511, 146);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(17, 11);
-            this.label11.TabIndex = 93;
-            this.label11.Text = "10";
+            this.heightLbl10.AutoSize = true;
+            this.heightLbl10.Font = new System.Drawing.Font("SimSun", 8F);
+            this.heightLbl10.Location = new System.Drawing.Point(511, 146);
+            this.heightLbl10.Name = "heightLbl10";
+            this.heightLbl10.Size = new System.Drawing.Size(17, 11);
+            this.heightLbl10.TabIndex = 93;
+            this.heightLbl10.Text = "10";
             // 
-            // label12
+            // heightLbl20
             // 
-            this.label12.AutoSize = true;
-            this.label12.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label12.Location = new System.Drawing.Point(511, 208);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(17, 11);
-            this.label12.TabIndex = 94;
-            this.label12.Text = "20";
+            this.heightLbl20.AutoSize = true;
+            this.heightLbl20.Font = new System.Drawing.Font("SimSun", 8F);
+            this.heightLbl20.Location = new System.Drawing.Point(511, 208);
+            this.heightLbl20.Name = "heightLbl20";
+            this.heightLbl20.Size = new System.Drawing.Size(17, 11);
+            this.heightLbl20.TabIndex = 94;
+            this.heightLbl20.Text = "20";
             // 
-            // label13
+            // heightLbl30
             // 
-            this.label13.AutoSize = true;
-            this.label13.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label13.Location = new System.Drawing.Point(511, 270);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(17, 11);
-            this.label13.TabIndex = 95;
-            this.label13.Text = "30";
+            this.heightLbl30.AutoSize = true;
+            this.heightLbl30.Font = new System.Drawing.Font("SimSun", 8F);
+            this.heightLbl30.Location = new System.Drawing.Point(511, 270);
+            this.heightLbl30.Name = "heightLbl30";
+            this.heightLbl30.Size = new System.Drawing.Size(17, 11);
+            this.heightLbl30.TabIndex = 95;
+            this.heightLbl30.Text = "30";
             // 
-            // label14
+            // heightLbl40
             // 
-            this.label14.AutoSize = true;
-            this.label14.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label14.Location = new System.Drawing.Point(511, 332);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(17, 11);
-            this.label14.TabIndex = 96;
-            this.label14.Text = "40";
+            this.heightLbl40.AutoSize = true;
+            this.heightLbl40.Font = new System.Drawing.Font("SimSun", 8F);
+            this.heightLbl40.Location = new System.Drawing.Point(511, 332);
+            this.heightLbl40.Name = "heightLbl40";
+            this.heightLbl40.Size = new System.Drawing.Size(17, 11);
+            this.heightLbl40.TabIndex = 96;
+            this.heightLbl40.Text = "40";
             // 
-            // label15
+            // heightLbl50
             // 
-            this.label15.AutoSize = true;
-            this.label15.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label15.Location = new System.Drawing.Point(511, 394);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(17, 11);
-            this.label15.TabIndex = 97;
-            this.label15.Text = "50";
+            this.heightLbl50.AutoSize = true;
+            this.heightLbl50.Font = new System.Drawing.Font("SimSun", 8F);
+            this.heightLbl50.Location = new System.Drawing.Point(511, 394);
+            this.heightLbl50.Name = "heightLbl50";
+            this.heightLbl50.Size = new System.Drawing.Size(17, 11);
+            this.heightLbl50.TabIndex = 97;
+            this.heightLbl50.Text = "50";
             // 
-            // label18
+            // heightLbl60
             // 
-            this.label18.AutoSize = true;
-            this.label18.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label18.Location = new System.Drawing.Point(511, 456);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(17, 11);
-            this.label18.TabIndex = 98;
-            this.label18.Text = "60";
+            this.heightLbl60.AutoSize = true;
+            this.heightLbl60.Font = new System.Drawing.Font("SimSun", 8F);
+            this.heightLbl60.Location = new System.Drawing.Point(511, 456);
+            this.heightLbl60.Name = "heightLbl60";
+            this.heightLbl60.Size = new System.Drawing.Size(17, 11);
+            this.heightLbl60.TabIndex = 98;
+            this.heightLbl60.Text = "60";
             // 
-            // label19
+            // heightLbl70
             // 
-            this.label19.AutoSize = true;
-            this.label19.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label19.Location = new System.Drawing.Point(511, 518);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(17, 11);
-            this.label19.TabIndex = 99;
-            this.label19.Text = "70";
+            this.heightLbl70.AutoSize = true;
+            this.heightLbl70.Font = new System.Drawing.Font("SimSun", 8F);
+            this.heightLbl70.Location = new System.Drawing.Point(511, 518);
+            this.heightLbl70.Name = "heightLbl70";
+            this.heightLbl70.Size = new System.Drawing.Size(17, 11);
+            this.heightLbl70.TabIndex = 99;
+            this.heightLbl70.Text = "70";
             // 
-            // label20
+            // heightLbl80
             // 
-            this.label20.AutoSize = true;
-            this.label20.Font = new System.Drawing.Font("SimSun", 8F);
-            this.label20.Location = new System.Drawing.Point(511, 580);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(17, 11);
-            this.label20.TabIndex = 100;
-            this.label20.Text = "80";
+            this.heightLbl80.AutoSize = true;
+            this.heightLbl80.Font = new System.Drawing.Font("SimSun", 8F);
+            this.heightLbl80.Location = new System.Drawing.Point(511, 580);
+            this.heightLbl80.Name = "heightLbl80";
+            this.heightLbl80.Size = new System.Drawing.Size(17, 11);
+            this.heightLbl80.TabIndex = 100;
+            this.heightLbl80.Text = "80";
             // 
             // Form1
             // 
@@ -4670,24 +4675,24 @@ namespace diao
             this.BorderColor = System.Drawing.Color.DarkGray;
             this.CanResize = false;
             this.ClientSize = new System.Drawing.Size(775, 598);
-            this.Controls.Add(this.label20);
-            this.Controls.Add(this.label19);
-            this.Controls.Add(this.label18);
-            this.Controls.Add(this.label15);
-            this.Controls.Add(this.label14);
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.heightLbl80);
+            this.Controls.Add(this.heightLbl70);
+            this.Controls.Add(this.heightLbl60);
+            this.Controls.Add(this.heightLbl50);
+            this.Controls.Add(this.heightLbl40);
+            this.Controls.Add(this.heightLbl30);
+            this.Controls.Add(this.heightLbl20);
+            this.Controls.Add(this.heightLbl10);
+            this.Controls.Add(this.heightLbl0);
+            this.Controls.Add(this.widthLbl80);
+            this.Controls.Add(this.widthLbl70);
+            this.Controls.Add(this.widthLbl60);
+            this.Controls.Add(this.widthLbl50);
+            this.Controls.Add(this.widthLbl40);
+            this.Controls.Add(this.widthLbl30);
+            this.Controls.Add(this.widthLbl20);
+            this.Controls.Add(this.widthLbl10);
+            this.Controls.Add(this.widthLbl0);
             this.Controls.Add(this.elapsedTimeLbl);
             this.Controls.Add(this.lockAspectRatioChkBox);
             this.Controls.Add(this.btnSettings);
@@ -4721,7 +4726,7 @@ namespace diao
             this.Controls.Add(this.but_fanse);
             this.Controls.Add(this.btnRotate);
             this.Controls.Add(this.btnFlip);
-            this.Controls.Add(this.change_half);
+            this.Controls.Add(this.canvasSpace);
             this.DropBack = false;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -4730,9 +4735,9 @@ namespace diao
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.DragOver += new System.Windows.Forms.DragEventHandler(this.Form1_DragOver);
-            this.change_half.ResumeLayout(false);
-            this.change_half.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.hua_ban)).EndInit();
+            this.canvasSpace.ResumeLayout(false);
+            this.canvasSpace.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar5)).EndInit();

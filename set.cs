@@ -19,8 +19,10 @@ namespace diao
     private object fanhui = (object) false;
     public static set m_formA;
     private IContainer components;
+
+    //Textbox and label 1 - 10 seems to be unsused? Not visible at least.
     private TextBox textBox10;
-    private Label label10;
+    private Label previewSpeedLbl;
     private TextBox textBox9;
     private Label label9;
     private TextBox textBox8;
@@ -38,20 +40,20 @@ namespace diao
     private TextBox textBox2;
     private Label label2;
     private TextBox textBox1;
-    private Label label1;
-    private Button button1;
-    private TextBox textBox11;
-    private Label label11;
-    private Button but_jian_ruo;
-    private Button but_jia_ruo;
-    private TextBox textBox12;
-    private TextBox textBox13;
-    private Button but_jia_kuang;
-    private Button but_jian_kuang;
+    private Label laserIntensityLbl;
+    private Button saveBtn;
+    private TextBox modelTxtBox;
+    private Label modelLbl;
+    private Button idleLaserMinusBtn;
+    private Button idleLaserPlusBtn;
+    private TextBox idleLaserValueTxtBox;
+    private TextBox previewSpeedValueTxtBox;
+    private Button previewSpeedPlusBtn;
+    private Button previewSpeedMinusBtn;
 
     public set()
     {
-      this.InitializeComponent();
+      InitializeComponent();
       m_formA = this;
     }
 
@@ -78,66 +80,62 @@ namespace diao
       textBox8.Text = MM1_.ToString();
       textBox9.Text = KUAI_.ToString();
       textBox10.Text = kuang_sd_.ToString();
-      textBox13.Text = kuang_sd_.ToString();
-      textBox11.Text = xh;
+      previewSpeedValueTxtBox.Text = kuang_sd_.ToString();
+      modelTxtBox.Text = xh;
     }
 
-    private void button1_Click(object sender, EventArgs e)
+    private void saveBtn_Click(object sender, EventArgs e)
     {
-      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
-      this.Close();
+      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.modelTxtBox.Text);
+      Close();
     }
 
-    private void set_Load(object sender, EventArgs e)
+    private void previewSpeedMinus_Click(object sender, EventArgs e)
     {
-    }
-
-    private void but_jian_kuang_Click(object sender, EventArgs e)
-    {
-      int int32 = Convert.ToInt32(this.textBox13.Text);
+      int int32 = Convert.ToInt32(this.previewSpeedValueTxtBox.Text);
       if (int32 > 1)
       {
         int num = int32 - 1;
-        this.textBox13.Text = num.ToString();
+        this.previewSpeedValueTxtBox.Text = num.ToString();
         this.textBox10.Text = num.ToString();
       }
-      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
+      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.modelTxtBox.Text);
     }
 
-    private void but_jia_kuang_Click(object sender, EventArgs e)
+    private void previewSpeedPlus_Click(object sender, EventArgs e)
     {
-      int int32 = Convert.ToInt32(this.textBox13.Text);
+      int int32 = Convert.ToInt32(this.previewSpeedValueTxtBox.Text);
       if (int32 < 10)
       {
         int num = int32 + 1;
-        this.textBox13.Text = num.ToString();
+        this.previewSpeedValueTxtBox.Text = num.ToString();
         this.textBox10.Text = num.ToString();
       }
-      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
+      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.modelTxtBox.Text);
     }
 
-    private void button2_Click(object sender, EventArgs e)
+    private void idleLaserIntensityMinus_Click(object sender, EventArgs e)
     {
-      int int32 = Convert.ToInt32(this.textBox12.Text);
+      int int32 = Convert.ToInt32(this.idleLaserValueTxtBox.Text);
       if (int32 > 1)
       {
         int num = int32 - 1;
-        this.textBox12.Text = num.ToString();
+        this.idleLaserValueTxtBox.Text = num.ToString();
         this.textBox1.Text = ((int) (50.0 + (double) (150 * num) * 0.1)).ToString();
       }
-      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
+      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.modelTxtBox.Text);
     }
 
-    private void but_jia_ruo_Click(object sender, EventArgs e)
+    private void idleLaserIntensityPlus_Click(object sender, EventArgs e)
     {
-      int int32 = Convert.ToInt32(this.textBox12.Text);
+      int int32 = Convert.ToInt32(this.idleLaserValueTxtBox.Text);
       if (int32 < 10)
       {
         int num = int32 + 1;
-        this.textBox12.Text = num.ToString();
+        this.idleLaserValueTxtBox.Text = num.ToString();
         this.textBox1.Text = ((int) (50.0 + (double) (150 * num) * 0.1)).ToString();
       }
-      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.textBox11.Text);
+      Form1.m_Form1.writeSettings(Convert.ToByte(this.textBox1.Text), (int) Convert.ToInt16(this.textBox2.Text), (int) Convert.ToInt16(this.textBox3.Text), Convert.ToByte(this.textBox4.Text), Convert.ToByte(this.textBox5.Text), Convert.ToByte(this.textBox6.Text), (int) Convert.ToInt16(this.textBox7.Text), (int) Convert.ToInt16(this.textBox8.Text), (int) Convert.ToInt16(this.textBox9.Text), (int) Convert.ToInt16(this.textBox10.Text), this.modelTxtBox.Text);
     }
 
     protected override void Dispose(bool disposing)
@@ -149,247 +147,334 @@ namespace diao
 
     private void InitializeComponent()
     {
-      ComponentResourceManager resources = new ComponentResourceManager();
-      textBox10 = new TextBox();
-      label10 = new Label();
-      textBox9 = new TextBox();
-      label9 = new Label();
-      textBox8 = new TextBox();
-      label8 = new Label();
-      textBox7 = new TextBox();
-      label7 = new Label();
-      textBox6 = new TextBox();
-      label6 = new Label();
-      textBox5 = new TextBox();
-      label5 = new Label();
-      textBox4 = new TextBox();
-      label4 = new Label();
-      textBox3 = new TextBox();
-      label3 = new Label();
-      textBox2 = new TextBox();
-      label2 = new Label();
-      textBox1 = new TextBox();
-      label1 = new Label();
-      button1 = new Button();
-      textBox11 = new TextBox();
-      label11 = new Label();
-      but_jian_ruo = new Button();
-      but_jia_ruo = new Button();
-      textBox12 = new TextBox();
-      textBox13 = new TextBox();
-      but_jia_kuang = new Button();
-      but_jian_kuang = new Button();
-      SuspendLayout();
-      textBox10.Location = new Point(362, 72);
-      textBox10.Name = "textBox10";
-      textBox10.Size = new Size(41, 21);
-      textBox10.TabIndex = 41;
-      textBox10.Text = "5";
-      textBox10.TextAlign = HorizontalAlignment.Center;
-      label10.AutoSize = true;
-      label10.Location = new Point(40, 74);
-      label10.Name = "label10";
-      label10.Size = new Size(71, 12);
-      label10.TabIndex = 40;
-      label10.Text = "框定位速度:";
-      textBox9.Location = new Point(866, 218);
-      textBox9.Name = "textBox9";
-      textBox9.Size = new Size(156, 21);
-      textBox9.TabIndex = 39;
-      textBox9.Text = "0";
-      label9.AutoSize = true;
-      label9.Location = new Point(710, 225);
-      label9.Name = "label9";
-      label9.Size = new Size(59, 12);
-      label9.TabIndex = 38;
-      label9.Text = "速度上限:";
-      textBox8.Location = new Point(866, 191);
-      textBox8.Name = "textBox8";
-      textBox8.Size = new Size(156, 21);
-      textBox8.TabIndex = 37;
-      textBox8.Text = "0";
-      label8.AutoSize = true;
-      label8.Location = new Point(710, 198);
-      label8.Name = "label8";
-      label8.Size = new Size(59, 12);
-      label8.TabIndex = 36;
-      label8.Text = "速度下限:";
-      textBox7.Location = new Point(866, 164);
-      textBox7.Name = "textBox7";
-      textBox7.Size = new Size(156, 21);
-      textBox7.TabIndex = 35;
-      textBox7.Text = "0";
-      label7.AutoSize = true;
-      label7.Location = new Point(710, 171);
-      label7.Name = "label7";
-      label7.Size = new Size(71, 12);
-      label7.TabIndex = 34;
-      label7.Text = "变速阶梯数:";
-      textBox6.Location = new Point(872, 332);
-      textBox6.Name = "textBox6";
-      textBox6.Size = new Size(156, 21);
-      textBox6.TabIndex = 33;
-      textBox6.Text = "0";
-      label6.AutoSize = true;
-      label6.Location = new Point(716, 339);
-      label6.Name = "label6";
-      label6.Size = new Size(77, 12);
-      label6.TabIndex = 32;
-      label6.Text = "Y轴换向补偿:";
-      textBox5.Location = new Point(872, 305);
-      textBox5.Name = "textBox5";
-      textBox5.Size = new Size(156, 21);
-      textBox5.TabIndex = 31;
-      textBox5.Text = "0";
-      label5.AutoSize = true;
-      label5.Location = new Point(716, 312);
-      label5.Name = "label5";
-      label5.Size = new Size(77, 12);
-      label5.TabIndex = 30;
-      label5.Text = "X轴换向补偿:";
-      textBox4.Location = new Point(866, 85);
-      textBox4.Name = "textBox4";
-      textBox4.Size = new Size(156, 21);
-      textBox4.TabIndex = 29;
-      textBox4.Text = "0";
-      label4.AutoSize = true;
-      label4.Location = new Point(710, 92);
-      label4.Name = "label4";
-      label4.Size = new Size(47, 12);
-      label4.TabIndex = 28;
-      label4.Text = "细分数:";
-      textBox3.Location = new Point(866, 58);
-      textBox3.Name = "textBox3";
-      textBox3.Size = new Size(156, 21);
-      textBox3.TabIndex = 27;
-      textBox3.Text = "0";
-      label3.AutoSize = true;
-      label3.Location = new Point(710, 65);
-      label3.Name = "label3";
-      label3.Size = new Size(83, 12);
-      label3.TabIndex = 26;
-      label3.Text = "最大激光功率:";
-      textBox2.Location = new Point(866, 31);
-      textBox2.Name = "textBox2";
-      textBox2.Size = new Size(156, 21);
-      textBox2.TabIndex = 25;
-      textBox2.Text = "0";
-      label2.AutoSize = true;
-      label2.Location = new Point(710, 38);
-      label2.Name = "label2";
-      label2.Size = new Size(47, 12);
-      label2.TabIndex = 24;
-      label2.Text = "行延时:";
-      textBox1.Location = new Point(362, 35);
-      textBox1.Name = "textBox1";
-      textBox1.Size = new Size(41, 21);
-      textBox1.TabIndex = 23;
-      textBox1.Text = "0";
-      textBox1.TextAlign = HorizontalAlignment.Center;
-      label1.AutoSize = true;
-      label1.Location = new Point(40, 40);
-      label1.Name = "label1";
-      label1.Size = new Size(83, 12);
-      label1.TabIndex = 22;
-      label1.Text = "待机激光强度:";
-      button1.Location = new Point(165, 145);
-      button1.Name = "button1";
-      button1.Size = new Size(117, 37);
-      button1.TabIndex = 21;
-      button1.Text = "写入";
-      button1.UseVisualStyleBackColor = true;
-      button1.Click += new EventHandler(this.button1_Click);
-      textBox11.Enabled = false;
-      textBox11.Location = new Point(185, 103);
-      textBox11.Name = "textBox11";
-      textBox11.Size = new Size(97, 21);
-      textBox11.TabIndex = 43;
-      textBox11.Text = "k";
-      label11.AutoSize = true;
-      label11.Location = new Point(40, 106);
-      label11.Name = "label11";
-      label11.Size = new Size(35, 12);
-      label11.TabIndex = 42;
-      label11.Text = "型号:";
-      but_jian_ruo.Location = new Point(185, 35);
-      but_jian_ruo.Name = "but_jian_ruo";
-      but_jian_ruo.Size = new Size(26, 22);
-      but_jian_ruo.TabIndex = 44;
-      but_jian_ruo.Text = "-";
-      but_jian_ruo.UseVisualStyleBackColor = true;
-      but_jian_ruo.Click += new EventHandler(this.button2_Click);
-      but_jia_ruo.Location = new Point(258, 35);
-      but_jia_ruo.Name = "but_jia_ruo";
-      but_jia_ruo.Size = new Size(24, 22);
-      but_jia_ruo.TabIndex = 45;
-      but_jia_ruo.Text = "+";
-      but_jia_ruo.UseVisualStyleBackColor = true;
-      but_jia_ruo.Click += new EventHandler(this.but_jia_ruo_Click);
-      textBox12.Location = new Point(214, 35);
-      textBox12.Name = "textBox12";
-      textBox12.Size = new Size(41, 21);
-      textBox12.TabIndex = 46;
-      textBox12.Text = "5";
-      textBox12.TextAlign = HorizontalAlignment.Center;
-      textBox13.Location = new Point(214, 70);
-      textBox13.Name = "textBox13";
-      textBox13.Size = new Size(41, 21);
-      textBox13.TabIndex = 49;
-      textBox13.Text = "5";
-      textBox13.TextAlign = HorizontalAlignment.Center;
-      but_jia_kuang.Location = new Point(258, 70);
-      but_jia_kuang.Name = "but_jia_kuang";
-      but_jia_kuang.Size = new Size(24, 22);
-      but_jia_kuang.TabIndex = 48;
-      but_jia_kuang.Text = "+";
-      but_jia_kuang.UseVisualStyleBackColor = true;
-      but_jia_kuang.Click += new EventHandler(this.but_jia_kuang_Click);
-      but_jian_kuang.Location = new Point(185, 70);
-      but_jian_kuang.Name = "but_jian_kuang";
-      but_jian_kuang.Size = new Size(26, 22);
-      but_jian_kuang.TabIndex = 47;
-      but_jian_kuang.Text = "-";
-      but_jian_kuang.UseVisualStyleBackColor = true;
-      but_jian_kuang.Click += new EventHandler(this.but_jian_kuang_Click);
-      AutoScaleDimensions = new SizeF(6f, 12f);
-      AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(323, 194);
-      Controls.Add(textBox13);
-      Controls.Add(but_jia_kuang);
-      Controls.Add(but_jian_kuang);
-      Controls.Add(textBox12);
-      Controls.Add(but_jia_ruo);
-      Controls.Add(but_jian_ruo);
-      Controls.Add(textBox11);
-      Controls.Add(label11);
-      Controls.Add(textBox10);
-      Controls.Add(label10);
-      Controls.Add(textBox9);
-      Controls.Add(label9);
-      Controls.Add(textBox8);
-      Controls.Add(label8);
-      Controls.Add(textBox7);
-      Controls.Add(label7);
-      Controls.Add(textBox6);
-      Controls.Add(label6);
-      Controls.Add(textBox5);
-      Controls.Add(label5);
-      Controls.Add(textBox4);
-      Controls.Add(label4);
-      Controls.Add(textBox3);
-      Controls.Add(label3);
-      Controls.Add(textBox2);
-      Controls.Add(label2);
-      Controls.Add(textBox1);
-      Controls.Add(label1);
-      Controls.Add(button1);
-      FormBorderStyle = FormBorderStyle.FixedSingle;
-      Icon = (Icon) resources.GetObject("$this.Icon");
-      Name = "set";
-      Text = "";
-      Load += new EventHandler(this.set_Load);
-      ResumeLayout(false);
-      PerformLayout();
+            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.previewSpeedLbl = new System.Windows.Forms.Label();
+            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.laserIntensityLbl = new System.Windows.Forms.Label();
+            this.saveBtn = new System.Windows.Forms.Button();
+            this.modelTxtBox = new System.Windows.Forms.TextBox();
+            this.modelLbl = new System.Windows.Forms.Label();
+            this.idleLaserMinusBtn = new System.Windows.Forms.Button();
+            this.idleLaserPlusBtn = new System.Windows.Forms.Button();
+            this.idleLaserValueTxtBox = new System.Windows.Forms.TextBox();
+            this.previewSpeedValueTxtBox = new System.Windows.Forms.TextBox();
+            this.previewSpeedPlusBtn = new System.Windows.Forms.Button();
+            this.previewSpeedMinusBtn = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // textBox10
+            // 
+            this.textBox10.Location = new System.Drawing.Point(362, 72);
+            this.textBox10.Name = "textBox10";
+            this.textBox10.Size = new System.Drawing.Size(41, 20);
+            this.textBox10.TabIndex = 41;
+            this.textBox10.Text = "5";
+            this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // previewSpeedLbl
+            // 
+            this.previewSpeedLbl.AutoSize = true;
+            this.previewSpeedLbl.Location = new System.Drawing.Point(40, 74);
+            this.previewSpeedLbl.Name = "previewSpeedLbl";
+            this.previewSpeedLbl.Size = new System.Drawing.Size(82, 13);
+            this.previewSpeedLbl.TabIndex = 40;
+            this.previewSpeedLbl.Text = "Preview Speed:";
+            // 
+            // textBox9
+            // 
+            this.textBox9.Location = new System.Drawing.Point(866, 218);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(156, 20);
+            this.textBox9.TabIndex = 39;
+            this.textBox9.Text = "0";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(710, 225);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(58, 13);
+            this.label9.TabIndex = 38;
+            this.label9.Text = "速度上限:";
+            // 
+            // textBox8
+            // 
+            this.textBox8.Location = new System.Drawing.Point(866, 191);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new System.Drawing.Size(156, 20);
+            this.textBox8.TabIndex = 37;
+            this.textBox8.Text = "0";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(710, 198);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(58, 13);
+            this.label8.TabIndex = 36;
+            this.label8.Text = "速度下限:";
+            // 
+            // textBox7
+            // 
+            this.textBox7.Location = new System.Drawing.Point(866, 164);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(156, 20);
+            this.textBox7.TabIndex = 35;
+            this.textBox7.Text = "0";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(710, 171);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(70, 13);
+            this.label7.TabIndex = 34;
+            this.label7.Text = "变速阶梯数:";
+            // 
+            // textBox6
+            // 
+            this.textBox6.Location = new System.Drawing.Point(872, 332);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(156, 20);
+            this.textBox6.TabIndex = 33;
+            this.textBox6.Text = "0";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(716, 339);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(77, 13);
+            this.label6.TabIndex = 32;
+            this.label6.Text = "Y轴换向补偿:";
+            // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(872, 305);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(156, 20);
+            this.textBox5.TabIndex = 31;
+            this.textBox5.Text = "0";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(716, 312);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(77, 13);
+            this.label5.TabIndex = 30;
+            this.label5.Text = "X轴换向补偿:";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(866, 85);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(156, 20);
+            this.textBox4.TabIndex = 29;
+            this.textBox4.Text = "0";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(710, 92);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(46, 13);
+            this.label4.TabIndex = 28;
+            this.label4.Text = "细分数:";
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(866, 58);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(156, 20);
+            this.textBox3.TabIndex = 27;
+            this.textBox3.Text = "0";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(710, 65);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(82, 13);
+            this.label3.TabIndex = 26;
+            this.label3.Text = "最大激光功率:";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(866, 31);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(156, 20);
+            this.textBox2.TabIndex = 25;
+            this.textBox2.Text = "0";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(710, 38);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(46, 13);
+            this.label2.TabIndex = 24;
+            this.label2.Text = "行延时:";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(362, 35);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(41, 20);
+            this.textBox1.TabIndex = 23;
+            this.textBox1.Text = "0";
+            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // laserIntensityLbl
+            // 
+            this.laserIntensityLbl.AutoSize = true;
+            this.laserIntensityLbl.Location = new System.Drawing.Point(40, 40);
+            this.laserIntensityLbl.Name = "laserIntensityLbl";
+            this.laserIntensityLbl.Size = new System.Drawing.Size(98, 13);
+            this.laserIntensityLbl.TabIndex = 22;
+            this.laserIntensityLbl.Text = "Idle Laser Intensity:";
+            // 
+            // saveBtn
+            // 
+            this.saveBtn.Location = new System.Drawing.Point(165, 145);
+            this.saveBtn.Name = "saveBtn";
+            this.saveBtn.Size = new System.Drawing.Size(117, 37);
+            this.saveBtn.TabIndex = 21;
+            this.saveBtn.Text = "Save";
+            this.saveBtn.UseVisualStyleBackColor = true;
+            this.saveBtn.Click += new System.EventHandler(this.saveBtn_Click);
+            // 
+            // modelTxtBox
+            // 
+            this.modelTxtBox.Enabled = false;
+            this.modelTxtBox.Location = new System.Drawing.Point(185, 103);
+            this.modelTxtBox.Name = "modelTxtBox";
+            this.modelTxtBox.Size = new System.Drawing.Size(97, 20);
+            this.modelTxtBox.TabIndex = 43;
+            this.modelTxtBox.Text = "k";
+            // 
+            // modelLbl
+            // 
+            this.modelLbl.AutoSize = true;
+            this.modelLbl.Location = new System.Drawing.Point(40, 106);
+            this.modelLbl.Name = "modelLbl";
+            this.modelLbl.Size = new System.Drawing.Size(39, 13);
+            this.modelLbl.TabIndex = 42;
+            this.modelLbl.Text = "Model:";
+            // 
+            // idleLaserMinusBtn
+            // 
+            this.idleLaserMinusBtn.Location = new System.Drawing.Point(185, 35);
+            this.idleLaserMinusBtn.Name = "idleLaserMinusBtn";
+            this.idleLaserMinusBtn.Size = new System.Drawing.Size(26, 22);
+            this.idleLaserMinusBtn.TabIndex = 44;
+            this.idleLaserMinusBtn.Text = "-";
+            this.idleLaserMinusBtn.UseVisualStyleBackColor = true;
+            this.idleLaserMinusBtn.Click += new System.EventHandler(this.idleLaserIntensityMinus_Click);
+            // 
+            // idleLaserPlusBtn
+            // 
+            this.idleLaserPlusBtn.Location = new System.Drawing.Point(258, 35);
+            this.idleLaserPlusBtn.Name = "idleLaserPlusBtn";
+            this.idleLaserPlusBtn.Size = new System.Drawing.Size(24, 22);
+            this.idleLaserPlusBtn.TabIndex = 45;
+            this.idleLaserPlusBtn.Text = "+";
+            this.idleLaserPlusBtn.UseVisualStyleBackColor = true;
+            this.idleLaserPlusBtn.Click += new System.EventHandler(this.idleLaserIntensityPlus_Click);
+            // 
+            // idleLaserValueTxtBox
+            // 
+            this.idleLaserValueTxtBox.Location = new System.Drawing.Point(214, 35);
+            this.idleLaserValueTxtBox.Name = "idleLaserValueTxtBox";
+            this.idleLaserValueTxtBox.Size = new System.Drawing.Size(41, 20);
+            this.idleLaserValueTxtBox.TabIndex = 46;
+            this.idleLaserValueTxtBox.Text = "5";
+            this.idleLaserValueTxtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // previewSpeedValueTxtBox
+            // 
+            this.previewSpeedValueTxtBox.Location = new System.Drawing.Point(214, 70);
+            this.previewSpeedValueTxtBox.Name = "previewSpeedValueTxtBox";
+            this.previewSpeedValueTxtBox.Size = new System.Drawing.Size(41, 20);
+            this.previewSpeedValueTxtBox.TabIndex = 49;
+            this.previewSpeedValueTxtBox.Text = "5";
+            this.previewSpeedValueTxtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // previewSpeedPlusBtn
+            // 
+            this.previewSpeedPlusBtn.Location = new System.Drawing.Point(258, 70);
+            this.previewSpeedPlusBtn.Name = "previewSpeedPlusBtn";
+            this.previewSpeedPlusBtn.Size = new System.Drawing.Size(24, 22);
+            this.previewSpeedPlusBtn.TabIndex = 48;
+            this.previewSpeedPlusBtn.Text = "+";
+            this.previewSpeedPlusBtn.UseVisualStyleBackColor = true;
+            this.previewSpeedPlusBtn.Click += new System.EventHandler(this.previewSpeedPlus_Click);
+            // 
+            // previewSpeedMinusBtn
+            // 
+            this.previewSpeedMinusBtn.Location = new System.Drawing.Point(185, 70);
+            this.previewSpeedMinusBtn.Name = "previewSpeedMinusBtn";
+            this.previewSpeedMinusBtn.Size = new System.Drawing.Size(26, 22);
+            this.previewSpeedMinusBtn.TabIndex = 47;
+            this.previewSpeedMinusBtn.Text = "-";
+            this.previewSpeedMinusBtn.UseVisualStyleBackColor = true;
+            this.previewSpeedMinusBtn.Click += new System.EventHandler(this.previewSpeedMinus_Click);
+            // 
+            // set
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(323, 194);
+            this.Controls.Add(this.previewSpeedValueTxtBox);
+            this.Controls.Add(this.previewSpeedPlusBtn);
+            this.Controls.Add(this.previewSpeedMinusBtn);
+            this.Controls.Add(this.idleLaserValueTxtBox);
+            this.Controls.Add(this.idleLaserPlusBtn);
+            this.Controls.Add(this.idleLaserMinusBtn);
+            this.Controls.Add(this.modelTxtBox);
+            this.Controls.Add(this.modelLbl);
+            this.Controls.Add(this.textBox10);
+            this.Controls.Add(this.previewSpeedLbl);
+            this.Controls.Add(this.textBox9);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.textBox8);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.textBox7);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.textBox6);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.textBox5);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.textBox4);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.laserIntensityLbl);
+            this.Controls.Add(this.saveBtn);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Name = "set";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
     }
   }
 }
